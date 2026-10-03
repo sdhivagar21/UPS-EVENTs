@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>UPS Events | Campus screens and events in Chennai</title>
 <meta name="description" content="UPS Events runs advertising screens inside Chennai's IT parks and plans brand pop-ups, markets and employee events on the same campuses.">
 <meta property="og:title" content="UPS Events | Campus screens and events in Chennai">
 <meta property="og:description" content="Advertising screens inside Chennai's IT parks, and the pop-ups, markets and events that happen on the same floors.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_IN">
-<meta name="theme-color" content="#1C2333">
+<meta name="theme-color" content="#EEF2F5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="UPS Events">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231C2333'/%3E%3Crect x='9' y='5' width='10' height='17' rx='2' fill='%23F0609A'/%3E%3Crect x='6' y='25' width='20' height='2.5' rx='1.2' fill='%23EEF2F5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,21 +126,17 @@ button{font:inherit}
 .hdr-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
 .hdr-cta .wide-only,.hdr-cta .xl-only{display:none}
 .hdr .btn{white-space:nowrap}
-.menu-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1.5px solid var(--ink);border-radius:var(--r);background:transparent;font-weight:650;cursor:pointer;color:var(--ink)}
-.menu-btn svg{width:18px;height:18px}
-.mnav{display:none;border-top:1px solid var(--line);background:var(--glass);max-height:calc(100vh - 68px);overflow:auto}
-.mnav.open{display:block}
-.mnav ul{list-style:none;padding:8px 0 20px}
-.mnav a{display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-weight:600;font-stretch:108%}
-.mnav a[aria-current="page"]{color:var(--silk)}
-.mnav .sub a{padding-left:16px;font-weight:500;font-size:var(--fs-sm)}
+.hdr{transition:transform .28s cubic-bezier(.2,.8,.2,1);view-transition-name:hdr}
+.hdr--away{transform:translateY(-100%)}
+.icon-btn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:#167A43;text-decoration:none}
+.icon-btn svg{width:22px;height:22px}
 @media(min-width:1100px){
   .nav{display:flex;gap:2px;margin-left:12px}
   .nav a{padding:8px 11px;border-radius:var(--r-sm);text-decoration:none;font-weight:560;font-size:var(--fs-sm);font-stretch:106%}
   .nav a:hover{background:rgba(28,35,51,.07)}
   .nav a[aria-current="page"]{color:var(--silk);box-shadow:inset 0 -2px 0 var(--silk);border-radius:0}
   .hdr-cta .wide-only{display:inline-flex}
-  .menu-btn,.mnav{display:none!important}
+  .hdr-cta .icon-btn{display:none}
 }
 @media(min-width:1300px){
   .hdr-cta .xl-only{display:inline-flex}
@@ -146,11 +145,64 @@ button{font:inherit}
 .wa-link svg,.btn svg{flex:none;max-width:none}
 .wa-link svg{width:18px;height:18px;color:#167A43}
 
-/* ============ Mobile action bar ============ */
-.mbar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -6px 20px -12px rgba(18,22,38,.25)}
-.mbar .btn{flex:1}
-@media(max-width:1099px){body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}}
-@media(min-width:1100px){.mbar{display:none}}
+/* ============ Mobile app shell: tab bar, context bar, bottom sheet ============ */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;padding:6px max(6px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-right));background:rgba(255,255,255,.94);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-top:1px solid var(--line);view-transition-name:tabbar}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;min-height:54px;padding:0 2px;text-decoration:none;color:var(--muted);font:inherit;font-size:.6875rem;font-weight:640;font-stretch:104%;letter-spacing:.01em;background:none;border:0;cursor:pointer;border-radius:12px}
+.tab-ico{display:grid;place-items:center;width:58px;height:30px;border-radius:15px;transition:background-color .2s,transform .12s}
+.tab-ico svg{width:23px;height:23px}
+.tab[aria-current="page"],.tab[aria-expanded="true"]{color:var(--silk)}
+.tab[aria-current="page"] .tab-ico,.tab[aria-expanded="true"] .tab-ico{background:var(--silk-soft)}
+.tab-fab{display:grid;place-items:center;width:54px;height:54px;margin-top:-30px;border-radius:18px;background:var(--silk);color:#fff;box-shadow:0 12px 24px -10px rgba(181,19,92,.75),0 0 0 5px var(--paper);transition:transform .12s,background-color .15s}
+.tab-fab svg{width:26px;height:26px}
+.tab--brief{color:var(--ink)}
+.tab--brief[aria-current="page"]{color:var(--silk)}
+.tab--brief[aria-current="page"] .tab-fab{background:var(--silk-strong)}
+@media(max-width:1099px){body{padding-bottom:calc(70px + env(safe-area-inset-bottom))}}
+@media(min-width:1100px){.tabbar{display:none}}
+
+.ctxbar{position:fixed;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:calc(76px + env(safe-area-inset-bottom));z-index:44;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 16px;background:var(--granite);color:var(--on-dark);border-radius:16px;box-shadow:0 18px 36px -16px rgba(18,22,38,.65);transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .25s;animation:ctxin .35s cubic-bezier(.2,.8,.2,1)}
+.ctxbar[hidden]{display:none}
+.ctxbar.away{transform:translateY(calc(100% + 96px));opacity:0;pointer-events:none}
+.ctx-info{min-width:0}
+.ctx-info b{display:block;font-stretch:112%;font-weight:720;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctx-info span{display:block;font-size:var(--fs-xs);color:var(--on-dark-muted)}
+.ctxbar .btn{flex:none}
+.ctxbar .btn:disabled{background:var(--granite-2);color:var(--on-dark-muted);cursor:not-allowed}
+@keyframes ctxin{from{transform:translateY(24px);opacity:0}}
+@media(min-width:760px){.ctxbar{display:none!important}}
+@media(max-width:759px){body.has-ctx{padding-bottom:calc(150px + env(safe-area-inset-bottom))}}
+
+html.locked,html.locked body{overflow:hidden}
+.sheet-host{position:fixed;inset:0;z-index:60}
+.sheet-host[hidden]{display:none}
+.sheet-backdrop{position:absolute;inset:0;background:rgba(12,16,26,.52);opacity:0;transition:opacity .28s}
+.sheet-host.open .sheet-backdrop{opacity:1}
+.sheet{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;max-height:90vh;max-height:90dvh;background:var(--glass);border-radius:22px 22px 0 0;transform:translateY(102%);transition:transform .34s cubic-bezier(.2,.8,.2,1),translate .25s cubic-bezier(.2,.8,.2,1);box-shadow:0 -12px 40px -12px rgba(0,0,0,.4);padding-bottom:env(safe-area-inset-bottom);outline:none}
+.sheet-host.open .sheet{transform:none}
+.sheet.dragging{transition:none}
+.sheet-grab{display:grid;place-items:center;height:24px;flex:none;cursor:grab;touch-action:none}
+.sheet-grab i{width:42px;height:5px;border-radius:3px;background:#B4BECB}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 14px 10px 20px;flex:none;touch-action:none}
+.sheet-title{font-size:var(--fs-md);font-stretch:118%;font-weight:740}
+.sheet-x{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:#DCE3EA;color:var(--ink);cursor:pointer;flex:none}
+.sheet-x svg{width:18px;height:18px}
+.sheet-body{overflow-y:auto;overscroll-behavior:contain;padding:2px 16px 24px;-webkit-overflow-scrolling:touch}
+@media(min-width:760px){.sheet{left:50%;right:auto;width:min(560px,100%);transform:translate(-50%,102%)}.sheet-host.open .sheet{transform:translate(-50%,0)}}
+
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.quick-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:78px;border-radius:16px;background:var(--paper);border:1px solid var(--line);text-decoration:none;font-weight:650;font-size:var(--fs-sm)}
+.quick-tile svg{width:24px;height:24px}
+.quick-tile--wa{background:#167A43;border-color:#167A43;color:#fff}
+.sheet-promo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:14px 16px;border-radius:16px;background:#151A2B;color:var(--on-dark);text-decoration:none}
+.sheet-promo b{display:block;font-stretch:114%;font-weight:720}
+.sheet-promo span{display:block;font-size:var(--fs-xs);color:var(--on-dark-muted)}
+.sheet-promo em{font-style:normal;font-weight:700;font-size:var(--fs-sm);color:#fff;background:var(--silk);padding:9px 14px;border-radius:var(--r);flex:none}
+.dest{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dest a{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 14px;border-radius:14px;background:var(--paper);border:1px solid var(--line);text-decoration:none;font-weight:620;font-size:var(--fs-sm);line-height:1.25}
+.dest a svg{width:22px;height:22px;flex:none;color:var(--silk)}
+.dest a[aria-current="page"]{border-color:var(--silk);background:#FDF5F9}
+.sheet-legal{display:flex;flex-wrap:wrap;gap:6px 18px;margin:18px 4px 0;font-size:var(--fs-xs)}
+.sheet-legal a{color:var(--muted)}
 
 /* ============ Page header ============ */
 .phead{padding-block:clamp(36px,6vw,80px) clamp(32px,5vw,56px)}
@@ -159,11 +211,17 @@ button{font:inherit}
 .dark .crumbs ol{color:var(--on-dark-muted)}
 .crumbs li+li::before{content:"/";margin-right:6px;opacity:.5}
 .crumbs a{text-underline-offset:3px}
+.back{display:none;align-items:center;gap:4px;margin:0 0 14px -6px;padding:8px 10px 8px 6px;min-height:40px;border-radius:var(--r);font-weight:650;font-size:var(--fs-sm);text-decoration:none;color:var(--silk)}
+.back svg{width:18px;height:18px}
+.dark .back,.show .back{color:var(--silk-on-dark)}
+.share-btn svg{width:18px;height:18px}
 
 /* ============ Hero ============ */
 .hero{padding-block:clamp(36px,6vw,72px) clamp(48px,7vw,88px);overflow:hidden}
-.hero-grid{display:grid;gap:48px;align-items:center}
-@media(min-width:960px){.hero-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}}
+.hero-grid{display:grid;gap:28px 48px;grid-template-areas:"copy" "act" "scene";align-items:center}
+.hero-copy{grid-area:copy}.hero-act{grid-area:act}.scene{grid-area:scene}
+.hero-act .btn-row{margin-top:0}
+@media(min-width:960px){.hero-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);grid-template-areas:"copy scene" "act scene";align-content:center}.hero-copy{align-self:end}.hero-act{align-self:start}}
 .hero .display{max-width:13ch}
 .hero-fact{margin-top:28px;font-size:var(--fs-sm);color:var(--muted);display:flex;gap:10px;align-items:baseline;max-width:52ch}
 .live-dot{width:9px;height:9px;border-radius:50%;background:var(--peacock);flex:none;box-shadow:0 0 0 4px var(--peacock-soft)}
@@ -173,20 +231,34 @@ button{font:inherit}
 .pod{width:clamp(196px,22vw,236px)}
 .pod-bezel{background:var(--granite);border-radius:var(--r-device);padding:11px 11px 14px;box-shadow:0 34px 60px -32px rgba(28,35,51,.6)}
 .pod-screen{position:relative;aspect-ratio:9/16;border-radius:10px;overflow:hidden;background:#0B0F1A}
-.ad{position:absolute;inset:0;padding:16px 15px;display:flex;flex-direction:column;justify-content:space-between;opacity:0;transition:opacity .55s ease}
+.pod-screen::before{content:"";position:absolute;inset:0 0 auto;height:44px;background:linear-gradient(rgba(10,14,24,.32),rgba(10,14,24,0));z-index:2;pointer-events:none}
+.segs{position:absolute;top:9px;left:9px;right:9px;z-index:3;display:flex;gap:3px;pointer-events:none}
+.segs i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.38);overflow:hidden}
+.segs b{display:block;height:100%;width:0;background:#fff;border-radius:2px}
+.segs i.done b{width:100%}
+.segs i.now b{animation:segfill var(--dur,3600ms) linear forwards}
+.pod-screen.paused .segs i.now b{animation-play-state:paused}
+@keyframes segfill{from{width:0}to{width:100%}}
+.tap{position:absolute;top:0;bottom:0;z-index:4;background:transparent;border:0;padding:0;margin:0;cursor:pointer;touch-action:pan-y;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tap--prev{left:0;width:34%}.tap--next{right:0;width:66%}
+.tap:focus-visible{outline:3px solid #fff;outline-offset:-5px;border-radius:8px}
+.held-tag{position:absolute;left:50%;top:50%;z-index:5;transform:translate(-50%,-50%);background:rgba(12,16,26,.72);color:#fff;font-size:.75rem;font-weight:650;padding:6px 12px;border-radius:999px;opacity:0;transition:opacity .15s;pointer-events:none}
+.pod-screen.held .held-tag{opacity:1}
+.ad{position:absolute;inset:0;padding:26px 15px 16px;display:flex;flex-direction:column;justify-content:space-between;opacity:0;transition:opacity .45s ease}
+.ad--you .ad-head{font-size:1.25rem}
+.ad-cta{position:relative;z-index:6;display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border-radius:var(--r);background:#fff;color:var(--silk-strong);font-weight:720;font-size:.8125rem;text-decoration:none;white-space:nowrap}
 .ad.on{opacity:1}
 .ad-brand{font-size:.75rem;font-weight:700;font-stretch:110%;letter-spacing:.01em}
 .ad-head{font-size:1.4rem;font-stretch:122%;font-weight:780;line-height:1.02;letter-spacing:-.01em}
 .ad-foot{display:flex;justify-content:space-between;align-items:end;gap:10px;font-size:.75rem;line-height:1.3;font-weight:550}
 .ad-foot svg{width:46px;height:46px;flex:none;border-radius:3px}
 .pod-meta{display:flex;align-items:center;gap:10px;color:var(--on-dark-muted);font-size:.75rem;margin-top:11px;font-variant-numeric:tabular-nums}
-.pod-bar{flex:1;height:4px;background:var(--granite-2);border-radius:2px;overflow:hidden}
-.pod-bar i{display:block;height:100%;width:0;background:var(--silk-on-dark)}
-.pod-bar i.run{width:100%;transition:width linear}
+.pod-meta{justify-content:space-between}
 .pod-neck{width:16px;height:44px;background:linear-gradient(90deg,#141a27,#2C3549,#141a27);margin-inline:auto}
 .pod-foot{width:112px;height:9px;border-radius:6px 6px 0 0;background:var(--granite);margin-inline:auto}
 .stall{width:100%;max-width:200px}
 .floor{grid-column:1/-1;height:3px;background:var(--ink);border-radius:2px}
+.only-narrow{display:none}
 .scene-cap{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;font-size:var(--fs-xs);color:var(--muted)}
 .pause{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-sm);padding:7px 11px;font-size:var(--fs-xs);font-weight:650;cursor:pointer;color:var(--ink);flex:none}
 .pause svg{width:12px;height:12px}
@@ -378,6 +450,7 @@ fieldset.field{border:0;margin:0;padding:0;min-width:0}
 .slots i{height:14px;border-radius:1px;background:var(--peacock)}
 .slots i.sold{background:#CDD5DF}
 .unit.sel{background:#FDF5F9}
+.avail-hint{display:none;margin:0 0 12px}
 @media(max-width:560px){.unit label{grid-template-columns:24px minmax(0,1fr)}.unit-state{grid-column:2;justify-items:start;text-align:left}}
 .summary{display:grid;gap:16px}
 @media(min-width:1000px){.summary{position:sticky;top:88px}}
@@ -465,8 +538,114 @@ fieldset.field{border:0;margin:0;padding:0;min-width:0}
 .show-band p{margin:0;color:var(--on-dark-muted)}
 .show-band b{color:var(--on-dark);font-stretch:112%;font-size:var(--fs-md);display:block;margin-bottom:2px}
 
+/* ============ Phones ============ */
+body{-webkit-tap-highlight-color:transparent}
+.rail-dots{display:none}
+@media(max-width:759px){
+  .wrap{padding-inline:max(var(--gut),env(safe-area-inset-left)) max(var(--gut),env(safe-area-inset-right))}
+  .section{padding-block:48px}
+  .phead{padding-block:16px 32px}
+  .crumbs{display:none}
+  .back{display:inline-flex}
+  .h1{font-size:2.125rem}
+  .h2{font-size:1.625rem}
+  .lead{font-size:1.125rem}
+  .btn-row{margin-top:22px}
+  .btn-row>.btn{flex:1 1 auto}
+
+  /* hero: the pod becomes the main event */
+  .hero{padding-block:18px 40px}
+  .hero-grid{grid-template-areas:"copy" "scene" "act";gap:22px}
+  .hero .display{font-size:2.5rem;line-height:1.02}
+  .hero .lead{margin-top:14px;font-size:1.0625rem}
+  .scene{grid-template-columns:1fr;max-width:none}
+  .pod{width:min(76vw,300px);margin-inline:auto}
+  .pod-bezel{border-radius:26px;padding:9px 9px 12px}
+  .pod-screen{border-radius:16px}
+  .ad{padding:30px 18px 18px}
+  .ad-brand{font-size:.8125rem}
+  .ad-head{font-size:clamp(1.6rem,8.4vw,2.1rem)}
+  .ad--you .ad-head{font-size:clamp(1.4rem,7.2vw,1.8rem)}
+  .ad-foot{font-size:.8125rem}
+  .ad-foot svg{width:58px;height:58px}
+  .pod-neck{height:26px}
+  .stall,.floor{display:none}
+  .scene-cap{margin-top:14px}
+  .only-wide{display:none}.only-narrow{display:inline}
+  .hero-act .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hero-act .btn{padding-inline:.6em}
+  .hero-fact{margin-top:18px}
+
+  /* swipe rails */
+  .rail{display:grid!important;grid-auto-flow:column;grid-template-columns:none!important;grid-auto-columns:86%;gap:12px!important;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:calc(-1 * var(--gut));padding:4px var(--gut) 6px;scroll-padding-inline:var(--gut);position:relative;border:0!important;border-radius:0!important}
+  .rail::-webkit-scrollbar{display:none}
+  .rail>*{scroll-snap-align:start;min-width:0}
+  .rail-dots{display:flex;justify-content:center;gap:6px;margin-top:14px}
+  .rail-dots button{width:8px;height:8px;padding:0;border:0;border-radius:4px;background:#B4BECB;cursor:pointer;transition:width .25s,background-color .25s;position:relative}
+  .rail-dots button::after{content:"";position:absolute;inset:-10px -4px}
+  .rail-dots button[aria-current="true"]{width:22px;background:var(--silk)}
+  .dark .rail-dots button{background:var(--granite-2)}
+  .dark .rail-dots button[aria-current="true"]{background:var(--silk-on-dark)}
+  .ways.rail .way{border-radius:16px;border:1px solid var(--line)}
+  .ways.rail .way.dark{border-color:var(--granite)}
+  .weeks.rail{grid-auto-columns:78%}
+  .weeks.rail li{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--silk);border-radius:16px;padding:18px 18px 20px}
+  .work-grid.rail{grid-auto-columns:82%}
+  .facts{gap:0;margin-top:28px}
+  .fact{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0;border-top-width:1px}
+  .fact b{font-size:var(--fs-md);margin:0}
+  .fact span{text-align:right}
+
+  /* tables become cards */
+  .tbl.stack-sm{border:0;background:none;overflow:visible}
+  .stack-sm table,.stack-sm tbody,.stack-sm tr,.stack-sm th,.stack-sm td{display:block}
+  .stack-sm thead{display:none}
+  .stack-sm tr{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  .stack-sm th[scope="row"]{padding:0 0 8px;border:0;font-size:var(--fs-base);font-stretch:110%}
+  .stack-sm td{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border:0;border-top:1px solid var(--line);text-align:right}
+  .stack-sm td::before{content:attr(data-label);color:var(--muted);text-align:left;flex:none;max-width:45%}
+  .stack-sm td.num{white-space:normal}
+
+  /* availability: the summary lives in a bottom sheet */
+  .avail>.summary{display:none}
+  .avail-hint{display:block!important}
+  .sheet-body .summary{display:grid;gap:14px;position:static}
+
+  /* tickets */
+  .show-title{font-size:2.75rem}
+  .when{gap:12px 24px;font-size:var(--fs-base)}
+
+  /* shorter footer: the menu sheet carries the links */
+  .foot{padding-block:40px 24px}
+  .foot-grid>div:not(:first-child){display:none}
+  .foot-legal{margin-top:28px}
+}
+@media(max-width:380px){
+  .hero .display{font-size:2.2rem}
+  .tab{font-size:.625rem}
+  .tab-ico{width:48px}
+}
+
+/* touch feedback */
+@media(hover:none){
+  .btn,.tile,.board-row,.quick-tile,.dest a,.stepper button,.sheet-promo,.icon-btn{transition:transform .12s ease,background-color .15s,color .15s,border-color .15s}
+  .btn:active,.tile:active,.board-row:active,.quick-tile:active,.dest a:active,.stepper button:active,.sheet-promo:active,.icon-btn:active{transform:scale(.96)}
+  .tab:active .tab-ico,.tab:active .tab-fab{transform:scale(.88)}
+  .unit label:active{background:#F5F7FA}
+}
+
+/* page transitions (Chrome, Edge, Safari 18+) */
+@media(prefers-reduced-motion:no-preference){
+  ::view-transition-old(root){animation:vt-out .16s ease-in both}
+  ::view-transition-new(root){animation:vt-in .32s cubic-bezier(.2,.8,.2,1) both}
+}
+@keyframes vt-out{to{opacity:0}}
+@keyframes vt-in{from{opacity:0;transform:translateY(14px)}}
+.demo{view-transition-name:demo}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  .segs i.now b{animation-duration:var(--dur,3600ms)!important}
 }
 </style>
 </head>
@@ -476,7 +655,16 @@ fieldset.field{border:0;margin:0;padding:0;min-width:0}
 <header class="hdr" id="hdr"></header>
 <main id="main" tabindex="-1"></main>
 <footer class="foot" id="foot"></footer>
-<div class="mbar" id="mbar"></div>
+<nav class="tabbar" id="tabbar" aria-label="Quick links"></nav>
+<div class="ctxbar" id="ctxbar" hidden></div>
+<div class="sheet-host" id="sheetHost" hidden>
+  <div class="sheet-backdrop" data-sheet-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" tabindex="-1">
+    <div class="sheet-grab" aria-hidden="true"><i></i></div>
+    <div class="sheet-head"><h2 class="sheet-title" id="sheetTitle">Menu</h2><button class="sheet-x" type="button" data-sheet-close aria-label="Close"></button></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
 <noscript>
   <div style="max-width:640px;margin:40px auto;padding:0 20px;font-family:system-ui,sans-serif">
     <h1>UPS Events</h1>
@@ -620,12 +808,18 @@ const SITE = {
 
   /* Sample ads that play in the hero screen (fictional brands) */
   loopAds: [
-    { brand: "Kaapi Corner",   head: "Filter coffee and vada, ₹59", sub: "Food court, 8 to 11 am",   bg: "#F3E3C3", fg: "#3B2412", ac: "#8A4B1F" },
-    { brand: "Northstar Tech", head: "We're hiring React developers", sub: "Scan to apply in 2 minutes", bg: "#14213D", fg: "#FFFFFF", ac: "#5EC2FF" },
-    { brand: "Marina Motors",  head: "Test ride this Friday",       sub: "Stall at Block B parking",  bg: "#E3F4EA", fg: "#0D3B2A", ac: "#13865A" },
-    { brand: "Desk Yoga Club", head: "Stretch break at 5 pm",       sub: "Block A terrace, free",     bg: "#FFE1D6", fg: "#4A1606", ac: "#C2410C" },
-    { brand: "UPS Events",     head: "Pongal market, 3 days",       sub: "Food court, this week",     bg: "#B5135C", fg: "#FFFFFF", ac: "#FFD1E4" },
-    { brand: "Kaveri Card",    head: "5% back on every lunch",      sub: "All food court counters",   bg: "#EEF2F5", fg: "#121626", ac: "#0E7A7E" }
+    { brand: "Kaapi Corner",     head: "Filter coffee and vada, ₹59",   sub: "Food court, 8 to 11 am",     bg: "#F3E3C3", fg: "#3B2412", ac: "#8A4B1F" },
+    { brand: "Northstar Tech",   head: "We're hiring React developers", sub: "Scan to apply in 2 minutes", bg: "#14213D", fg: "#FFFFFF", ac: "#5EC2FF" },
+    { brand: "Marina Motors",    head: "Test ride this Friday",         sub: "Stall at Block B parking",   bg: "#E3F4EA", fg: "#0D3B2A", ac: "#13865A" },
+    { brand: "Idli Express",     head: "Breakfast at your desk by 9",   sub: "Order before 8:30 am",       bg: "#FFF4C2", fg: "#3D2E00", ac: "#8A6400" },
+    { you: true, brand: "Slot 5 is open", head: "Your brand here, about 240 times a day", sub: "15 seconds a play", bg: "#B5135C", fg: "#FFFFFF", ac: "#FFD1E4" },
+    { brand: "Desk Yoga Club",   head: "Stretch break at 5 pm",         sub: "Block A terrace, free",      bg: "#FFE1D6", fg: "#4A1606", ac: "#C2410C" },
+    { brand: "Lensly Opticals",  head: "Free eye test in the lobby",    sub: "Today till 6 pm",            bg: "#DDEBFF", fg: "#0B2A5B", ac: "#1D5FD1" },
+    { brand: "Kaveri Card",      head: "5% back on every lunch",        sub: "All food court counters",    bg: "#EEF2F5", fg: "#121626", ac: "#0E7A7E" },
+    { brand: "Thalam Music",     head: "Weekend guitar classes",        sub: "First class free",           bg: "#2B1B3D", fg: "#FFFFFF", ac: "#FFB86B" },
+    { brand: "UPS Events",       head: "Pongal market, 3 days",         sub: "Food court, this week",      bg: "#0E7A7E", fg: "#FFFFFF", ac: "#BFF3F1" },
+    { brand: "GreenLoop Cabs",   head: "₹99 to the metro station",      sub: "Scan to book a ride",        bg: "#E6F7D9", fg: "#173B0B", ac: "#3F7E1A" },
+    { brand: "FitHub Gym",       head: "First month ₹499",              sub: "200 m from Gate 2",          bg: "#121626", fg: "#FFFFFF", ac: "#F0609A" }
   ]
 };
 
@@ -688,6 +882,27 @@ const ICON = {
   pause: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx=".6"/><rect x="7" y="1.5" width="3" height="9" rx=".6"/></svg>',
   play: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z"/></svg>'
 };
+const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC = {
+  home: ico('<path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>'),
+  screen: ico('<rect x="7.5" y="2.5" width="9" height="14" rx="1.6"/><path d="M12 16.5v4M8 21h8"/>'),
+  plus: ico('<path d="M12 5v14M5 12h14"/>'),
+  events: ico('<path d="M3 9.5h18L19 4H5z"/><path d="M5 9.5V20M19 9.5V20M3 20h18"/><path d="M9.5 20v-5.5h5V20"/>'),
+  grid: ico('<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>'),
+  phone: ico('<path d="M5 4h3.5l2 5-2.4 1.5a11 11 0 0 0 5.4 5.4L15 13.5l5 2V19a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>'),
+  mail: ico('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/>'),
+  pin: ico('<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'),
+  layers: ico('<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'),
+  work: ico('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12.5h18"/>'),
+  store: ico('<path d="M4 9.5 5.5 4h13L20 9.5"/><path d="M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5.5 12v8h13v-8"/>'),
+  building: ico('<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10.5 21v-4h3v4"/>'),
+  info: ico('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6v.01"/>'),
+  rupee: ico('<path d="M7 4.5h10M7 9h10M7 4.5c5.5 0 6.5 9-.5 9L14 20"/>'),
+  cal: ico('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><path d="m9 15 2 2 4-4"/>'),
+  share: ico('<path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12.5V20h14v-7.5"/>'),
+  back: ico('<path d="M15 5l-7 7 7 7"/>'),
+  close: ico('<path d="M6 6l12 12M18 6 6 18"/>')
+};
 const MARK = '<svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1C2333"/><rect x="9" y="5" width="10" height="17" rx="2" fill="#F0609A"/><rect x="6" y="25" width="20" height="2.5" rx="1.2" fill="#EEF2F5"/></svg>';
 
 function qr(seed, fg, bg) {
@@ -744,7 +959,9 @@ function kolamBg() {
    ===================================================================== */
 function phead({ crumbs = [], title, lead = "", actions = "", dark = false, after = "" }) {
   const c = crumbs.length ? `<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="#/">Home</a></li>${crumbs.map((x, i) => i === crumbs.length - 1 && !x[1] ? `<li aria-current="page">${esc(x[0])}</li>` : `<li><a href="${x[1]}">${esc(x[0])}</a></li>`).join("")}</ol></nav>` : "";
-  return `<section class="phead ${dark ? "dark" : ""}"><div class="wrap">${c}<h1 class="h1">${title}</h1>${lead ? `<p class="lead">${lead}</p>` : ""}${actions ? `<div class="btn-row">${actions}</div>` : ""}${after}</div></section>`;
+  const up = crumbs.length > 1 && crumbs[crumbs.length - 2][1] ? crumbs[crumbs.length - 2] : ["Home", "#/"];
+  const back = crumbs.length ? `<a class="back" href="${up[1]}">${IC.back}${esc(up[0])}</a>` : "";
+  return `<section class="phead ${dark ? "dark" : ""}"><div class="wrap">${c}${back}<h1 class="h1">${title}</h1>${lead ? `<p class="lead">${lead}</p>` : ""}${actions ? `<div class="btn-row">${actions}</div>` : ""}${after}</div></section>`;
 }
 
 function contactBand(title = "Tell us what you're planning", text = `A few lines is enough. We reply ${SITE.replyTime}.`) {
@@ -780,7 +997,7 @@ function weeksBlock() {
     ["Week 3", "Screens tell people the stall is open today and where to find it.", "Your stall runs, with our team on the floor."],
     ["Week 4", "A follow-up offer with a QR code catches people who missed the stall.", "Teardown, and one report covering screens and stall."]
   ];
-  return `<ol class="weeks">${w.map(x => `<li><span class="wk">${x[0]}</span><dl><dt>On the screens</dt><dd>${x[1]}</dd><dt>On the floor</dt><dd>${x[2]}</dd></dl></li>`).join("")}</ol>`;
+  return `<ol class="weeks rail">${w.map(x => `<li><span class="wk">${x[0]}</span><dl><dt>On the screens</dt><dd>${x[1]}</dd><dt>On the floor</dt><dd>${x[2]}</dd></dl></li>`).join("")}</ol>`;
 }
 
 function boardBlock() {
@@ -799,7 +1016,7 @@ function boardBlock() {
 }
 
 function workTiles(list) {
-  return `<div class="work-grid">${list.map(w => `<article class="tile"><div class="tile-art">${art(w.art, w.title)}</div><div class="tile-body">
+  return `<div class="work-grid rail">${list.map(w => `<article class="tile"><div class="tile-art">${art(w.art, w.title)}</div><div class="tile-body">
     <div class="tile-type">${esc(w.type)}${w.sample ? '<span class="sample-tag">Sample</span>' : ""}</div>
     <h3 class="h3">${esc(w.title)}</h3><p class="muted small">${esc(w.what)}</p><div class="result">${esc(w.result)}</div></div></article>`).join("")}</div>`;
 }
@@ -823,7 +1040,7 @@ function fieldHTML(f, idp) {
     return `<div class="${cls}"><label for="${id}">${esc(f.label)}${opt}</label><textarea id="${id}" name="${f.name}" ${desc} placeholder="${esc(f.placeholder || "")}"></textarea>${hint}<div class="ferr" id="${id}-e" hidden></div></div>`;
   }
   const t = f.type || "text", ac = { name: "name", email: "email", phone: "tel", company: "organization" }[f.name] || "off";
-  return `<div class="${cls}"><label for="${id}">${esc(f.label)}${opt}</label><input id="${id}" name="${f.name}" type="${t}" autocomplete="${ac}" ${t === "tel" ? 'inputmode="tel"' : ""} ${desc} placeholder="${esc(f.placeholder || "")}">${hint}<div class="ferr" id="${id}-e" hidden></div></div>`;
+  return `<div class="${cls}"><label for="${id}">${esc(f.label)}${opt}</label><input id="${id}" name="${f.name}" type="${t}" autocomplete="${ac}" ${t === "tel" ? 'inputmode="tel"' : ""} ${["name", "company", "business", "venue"].includes(f.name) ? 'autocapitalize="words"' : ""} ${t === "email" ? 'autocapitalize="off" spellcheck="false"' : ""} ${desc} placeholder="${esc(f.placeholder || "")}">${hint}<div class="ferr" id="${id}-e" hidden></div></div>`;
 }
 
 function formHTML(id, cfg) {
@@ -865,6 +1082,7 @@ function bindForm(id, cfg) {
     const extra = cfg.extra ? cfg.extra() : "";
     const body = `${cfg.subject}\n\n${lines.join("\n")}${extra ? "\n\n" + extra : ""}`;
     window.open(waURL(body), "_blank", "noopener");
+    buzz([10, 60, 14]);
     form.innerHTML = `<div class="done" tabindex="-1">
       <h3>${cfg.doneTitle || "Your message is ready in WhatsApp"}</h3>
       <p class="muted">Press send in WhatsApp to reach us. We reply ${SITE.replyTime}.</p>
@@ -887,34 +1105,49 @@ const FIELDS = {
    ===================================================================== */
 const V = {};
 
+function adHTML(a, i) {
+  const style = `background:${a.bg};color:${a.fg}`;
+  if (a.you) return `<div class="ad ad--you ${i === 0 ? "on" : ""}" style="${style}" ${i ? "aria-hidden=\"true\" inert" : ""}>
+    <div class="ad-brand" style="color:${a.ac}">Slot ${i + 1} is open</div>
+    <div class="ad-head">Your brand here, about ${playsPerDay()} times a day</div>
+    <div class="ad-foot"><span>${SITE.slotSeconds} seconds a play</span><a class="ad-cta" href="#/screens/availability">Check availability</a></div></div>`;
+  return `<div class="ad ${i === 0 ? "on" : ""}" style="${style}" ${i ? "aria-hidden=\"true\" inert" : ""}>
+    <div class="ad-brand" style="color:${a.ac}">${esc(a.brand)}</div>
+    <div class="ad-head">${esc(a.head)}</div>
+    <div class="ad-foot"><span>${esc(a.sub)}</span>${qr(a.brand, a.fg, a.bg)}</div></div>`;
+}
+
 V.home = () => {
   const live = SITE.campuses.find(c => c.status === "live");
   const liveCount = live ? live.units.filter(u => !u.soon).length : 0;
   const s = SITE.show, showOn = showState() === "upcoming";
   return { title: "Campus screens and events in Chennai", html: `
   <section class="hero"><div class="wrap hero-grid">
-    <div>
+    <div class="hero-copy">
       <h1 class="display">Be on the screen they pass every morning.</h1>
       <p class="lead">${SITE.name} runs advertising screens inside ${SITE.city}'s IT parks, and plans the pop-ups, markets and events on the same floors. Book screens, an event, or both in the same month.</p>
-      <div class="btn-row"><a class="btn btn--primary" href="#/screens/availability">Check screen availability</a><a class="btn btn--ghost" href="#/brief">Start a brief</a></div>
+    </div>
+    <div class="hero-act">
+      <div class="btn-row"><a class="btn btn--primary" href="#/screens/availability">Check availability</a><a class="btn btn--ghost" href="#/brief">Start a brief</a></div>
       ${live ? `<p class="hero-fact"><span class="live-dot" aria-hidden="true"></span><span>${liveCount} screens and standees live at ${esc(live.name)}, ${esc(live.area)}, where ${esc(live.people)} people work.</span></p>` : ""}
     </div>
     <figure class="scene" style="margin:0">
       <div class="pod">
         <div class="pod-bezel">
-          <div class="pod-screen" id="podScreen" aria-live="off">
-            ${SITE.loopAds.map((a, i) => `<div class="ad ${i === 0 ? "on" : ""}" style="background:${a.bg};color:${a.fg}" ${i ? 'aria-hidden="true"' : ""}>
-              <div class="ad-brand" style="color:${a.ac}">${esc(a.brand)}</div>
-              <div class="ad-head">${esc(a.head)}</div>
-              <div class="ad-foot"><span>${esc(a.sub)}</span>${qr(a.brand, a.fg, a.bg)}</div></div>`).join("")}
+          <div class="pod-screen" id="podScreen" role="group" aria-label="Sample ads playing in a ${SITE.slotsPerLoop}-slot loop">
+            <div class="segs" aria-hidden="true">${SITE.loopAds.map(() => "<i><b></b></i>").join("")}</div>
+            ${SITE.loopAds.map((a, i) => adHTML(a, i)).join("")}
+            <button class="tap tap--prev" type="button" aria-label="Previous ad"></button>
+            <button class="tap tap--next" type="button" aria-label="Next ad"></button>
+            <span class="held-tag" aria-hidden="true">Paused</span>
           </div>
-          <div class="pod-meta"><span>Slot <b id="slotNo">1</b> of ${SITE.slotsPerLoop}</span><span class="pod-bar"><i id="podBar"></i></span><span>${SITE.slotSeconds}s</span></div>
+          <div class="pod-meta"><span>Slot <b id="slotNo">1</b> of ${SITE.loopAds.length}</span><span>${SITE.slotSeconds}s each</span></div>
         </div>
         <div class="pod-neck"></div><div class="pod-foot"></div>
       </div>
       ${STALL_SVG}
       <div class="floor"></div>
-      <figcaption class="scene-cap"><span>A digital pod in a food court, with a stall a few steps away. The preview runs faster than a real ${SITE.slotSeconds}-second slot.</span>
+      <figcaption class="scene-cap"><span><span class="only-wide">A digital pod in a food court, with a stall a few steps away. Click the screen to skip an ad.</span><span class="only-narrow">Tap the screen to skip, hold to pause. Real slots run ${SITE.slotSeconds} seconds.</span></span>
         <button class="pause" id="podToggle" type="button" aria-pressed="false">${ICON.pause}<span>Pause</span></button></figcaption>
     </figure>
   </div></section>
@@ -923,7 +1156,7 @@ V.home = () => {
 
   <section class="section"><div class="wrap">
     <div class="sec-head"><div><h2 class="h2">Two ways to use a campus</h2><p class="lead">Use the screens people walk past every day, the floor space where they stop, or both together.</p></div></div>
-    <div class="ways">
+    <div class="ways rail">
       <div class="way dark">
         <h3 class="h3">Screens</h3>
         <p class="muted">Digital pods, wall panels and backlit standees in lobbies, lift areas and food courts. Booked by the unit, by the month.</p>
@@ -984,7 +1217,7 @@ V.eventType = slug => {
   const t = SITE.eventTypes.find(x => x.slug === slug); if (!t) return null;
   const others = SITE.eventTypes.filter(x => x !== t);
   return { title: t.name, html: `
-  ${phead({ crumbs: [["Events", "#/events"], [t.name]], title: esc(t.name), lead: esc(t.short), actions: `<a class="btn btn--primary" href="#/brief?type=event">Start a brief</a>` })}
+  ${phead({ crumbs: [["Events", "#/events"], [t.name]], title: esc(t.name), lead: esc(t.short), actions: `<a class="btn btn--primary" href="#/brief?type=event">Start a brief</a><button class="btn btn--ghost share-btn" type="button" data-share="${esc(`${t.name} by ${SITE.name}: ${t.short}`)}">${IC.share}Share</button>` })}
   <section class="section tight"><div class="wrap split wide-left">
     <div class="stack">
       <h2 class="h3">Who it's for</h2><p class="measure">${esc(t.who)}</p>
@@ -1028,8 +1261,8 @@ V.screens = () => ({ title: "Screen advertising (DOOH)", html: `
   </div></section>` });
 
 function formatsTable() {
-  return `<div class="tbl"><table><thead><tr><th scope="col">Format</th><th scope="col">Size</th><th scope="col">Where</th><th scope="col">How it's sold</th><th scope="col">Status</th></tr></thead><tbody>
-    ${SITE.formats.map(f => `<tr><th scope="row">${esc(f.name)}</th><td>${esc(f.size)}</td><td>${esc(f.where)}</td><td>${esc(f.sold)}</td><td>${f.status === "live" ? '<span class="status status--live">Live</span>' : '<span class="status status--soon">Coming soon</span>'}</td></tr>`).join("")}
+  return `<div class="tbl stack-sm"><table><thead><tr><th scope="col">Format</th><th scope="col">Size</th><th scope="col">Where</th><th scope="col">How it's sold</th><th scope="col">Status</th></tr></thead><tbody>
+    ${SITE.formats.map(f => `<tr><th scope="row">${esc(f.name)}</th><td data-label="Size">${esc(f.size)}</td><td data-label="Where">${esc(f.where)}</td><td data-label="Sold as">${esc(f.sold)}</td><td data-label="Status">${f.status === "live" ? '<span class="status status--live">Live</span>' : '<span class="status status--soon">Coming soon</span>'}</td></tr>`).join("")}
   </tbody></table></div>`;
 }
 
@@ -1096,8 +1329,8 @@ V.how = () => {
 V.rates = () => ({ title: "Screen advertising rates", html: `
   ${phead({ crumbs: [["Screens", "#/screens"], ["Rates"]], title: "Rates", lead: `Prices per unit, per month. Minimum ${SITE.minUnits} units per campus. All prices are plus ${SITE.gst}% GST and paid in advance.` })}
   <section class="section tight"><div class="wrap">
-    <div class="tbl"><table><thead><tr><th scope="col">Format</th><th scope="col">What you get</th><th scope="col" class="num">Per unit, per month</th></tr></thead><tbody>
-      ${SITE.formats.filter(f => SITE.rates[f.id]).map(f => `<tr><th scope="row">${esc(f.name)}</th><td>${esc(f.sold)}</td><td class="num">${inr(SITE.rates[f.id])}</td></tr>`).join("")}
+    <div class="tbl stack-sm"><table><thead><tr><th scope="col">Format</th><th scope="col">What you get</th><th scope="col" class="num">Per unit, per month</th></tr></thead><tbody>
+      ${SITE.formats.filter(f => SITE.rates[f.id]).map(f => `<tr><th scope="row">${esc(f.name)}</th><td data-label="You get">${esc(f.sold)}</td><td class="num" data-label="Per month">${inr(SITE.rates[f.id])}</td></tr>`).join("")}
     </tbody></table></div>
     <p class="muted small" style="margin-top:14px">Book 3 months and save ${SITE.durationDiscount[3]}%. Book 6 months and save ${SITE.durationDiscount[6]}%.</p>
   </div></section>
@@ -1161,6 +1394,7 @@ V.availability = (qs) => {
         <div class="field"><label for="av-campus">Campus</label><select id="av-campus">${live.map(c => `<option value="${c.slug}" ${qs.get("campus") === c.slug ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select></div>
         <div class="field"><label for="av-month">Month</label><select id="av-month">${months.map(m => `<option value="${m.key}">${m.label}</option>`).join("")}</select></div>
       </div>
+      <p class="avail-hint muted small">Tick ${SITE.minUnits} or more units, then tap Review at the bottom of the screen.</p>
       <ul class="units" id="units" aria-label="Units at this campus"></ul>
       <p class="muted xs" style="margin-top:12px">Screens show how many of their ${SITE.slotsPerLoop} slots are still open. Standees go to one advertiser at a time.</p>
     </div>
@@ -1199,9 +1433,12 @@ function initAvailability() {
     const t = calcTotals(q, 1);
     $("#avSum").innerHTML = list.length
       ? `${totalsHTML(t, 1, `Selected for ${esc(monthLabel())}`)}<ul>${list.map(u => `<li><span>${esc(u.id)}</span><span>${inr(SITE.rates[u.fmt])}</span></li>`).join("")}</ul>`
-      : `<h2 class="h3">Nothing selected yet</h2><p class="minline">Tick at least ${SITE.minUnits} units on the left to see a price and request a hold.</p>`;
+      : `<h2 class="h3">Nothing selected yet</h2><p class="minline">Tick at least ${SITE.minUnits} units to see a price and request a hold.</p>`;
+    const n = list.length, need = Math.max(0, SITE.minUnits - n);
+    setCtx(`<div class="ctx-info"><b>${n ? `${n} ${n === 1 ? "unit" : "units"}, ${inr(t.total)}` : "No units selected"}</b><span>${need ? `Pick ${need} more to request a hold` : `${esc(monthLabel())}, including GST`}</span></div><button class="btn btn--primary btn--sm" type="button" id="ctxGo" ${n ? "" : "disabled"}>Review</button>`);
+    $("#ctxGo").onclick = e => Sheet.open({ title: "Your selection", el: $(".avail .summary"), opener: e.currentTarget });
   };
-  $("#units").addEventListener("change", e => { if (e.target.type !== "checkbox") return; e.target.checked ? sel.add(e.target.value) : sel.delete(e.target.value); e.target.closest(".unit").classList.toggle("sel", e.target.checked); drawSum(); });
+  $("#units").addEventListener("change", e => { if (e.target.type !== "checkbox") return; e.target.checked ? sel.add(e.target.value) : sel.delete(e.target.value); e.target.closest(".unit").classList.toggle("sel", e.target.checked); buzz(); drawSum(); });
   $("#av-campus").addEventListener("change", () => { sel.clear(); drawUnits(); });
   $("#av-month").addEventListener("change", drawUnits);
   drawUnits();
@@ -1277,8 +1514,8 @@ V.campus = slug => {
   </div></section>
   ${c.units.length ? `<section class="section paper"><div class="wrap">
     <div class="sec-head"><div><h2 class="h2">Units at this campus</h2></div><a class="link" href="#/screens/formats">Format specs</a></div>
-    <div class="tbl"><table><thead><tr><th scope="col">Unit</th><th scope="col">Format</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead><tbody>
-      ${c.units.map(u => `<tr><th scope="row">${esc(u.id)}</th><td>${esc(fmtOf(u.fmt).name)}</td><td>${esc(u.spot)}</td><td>${u.soon ? '<span class="status status--soon">Coming soon</span>' : '<span class="status status--live">Live</span>'}</td></tr>`).join("")}
+    <div class="tbl stack-sm"><table><thead><tr><th scope="col">Unit</th><th scope="col">Format</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead><tbody>
+      ${c.units.map(u => `<tr><th scope="row">${esc(u.id)}</th><td data-label="Format">${esc(fmtOf(u.fmt).name)}</td><td data-label="Location">${esc(u.spot)}</td><td data-label="Status">${u.soon ? '<span class="status status--soon">Coming soon</span>' : '<span class="status status--live">Live</span>'}</td></tr>`).join("")}
     </tbody></table></div>
   </div></section>` : ""}
   <section class="section"><div class="wrap split">
@@ -1381,12 +1618,14 @@ V.tickets = () => {
   const ended = st === "ended";
   const fields = [FIELDS.name, FIELDS.phone, { name: "email", label: "Email", type: "email", hint: "We send your e-ticket here." }];
   return { title: s.name, html: `
-  <section class="show section"><div aria-hidden="true">${kolamBg()}</div><div class="wrap split wide-left" style="align-items:center">
+  <section class="show section dark"><div aria-hidden="true">${kolamBg()}</div><div class="wrap split wide-left" style="align-items:center">
     <div>
       <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="#/">Home</a></li><li aria-current="page">Tickets</li></ol></nav>
+      <a class="back" href="#/">${IC.back}Home</a>
       <h1 class="show-title">${esc(s.name)}</h1>
       <p class="lead">${esc(s.strap)}</p>
       <div class="when"><div><span>Dates</span>${showDates()}</div><div><span>Time</span>${esc(s.time)}</div><div><span>Venue</span>${esc(s.venue)}</div></div>
+      <div class="btn-row"><button class="btn btn--ghost btn--sm share-btn" type="button" data-share="${esc(`${s.name}, ${showDates()} at ${s.venue}. Tickets ${inr(s.price)}.`)}">${IC.share}Share with friends</button></div>
       ${ended ? `<p class="ended">This event has ended. Message us on WhatsApp to hear about the next one.</p>` : ""}
     </div>
     <div class="ticket" id="ticket">
@@ -1418,9 +1657,14 @@ V.tickets = () => {
 function initTickets() {
   const s = SITE.show; let n = 2;
   const price = k => Math.floor(k / s.group.size) * s.group.price + (k % s.group.size) * s.price;
-  const draw = () => { $("#tq").textContent = n; $('[data-t="-1"]').disabled = n <= 1; $("#ttotal").textContent = `Total ${inr(price(n))} for ${n} ${n === 1 ? "adult" : "adults"}`; };
-  $("#ticket").addEventListener("click", e => { const b = e.target.closest("[data-t]"); if (!b) return; n = Math.max(1, Math.min(20, n + Number(b.dataset.t))); draw(); });
+  const draw = () => {
+    $("#tq").textContent = n; $('[data-t="-1"]').disabled = n <= 1;
+    $("#ttotal").textContent = `Total ${inr(price(n))} for ${n} ${n === 1 ? "adult" : "adults"}`;
+    setCtx(`<div class="ctx-info"><b>${inr(price(n))}</b><span>${n} ${n === 1 ? "adult" : "adults"}, ${esc(s.name)}</span></div><a class="btn btn--primary btn--sm" href="#/tickets" data-jump="ticket" data-focus="ticketForm-name">Reserve</a>`);
+  };
+  $("#ticket").addEventListener("click", e => { const b = e.target.closest("[data-t]"); if (!b) return; n = Math.max(1, Math.min(20, n + Number(b.dataset.t))); buzz(); draw(); });
   draw();
+  watchAway($("#ticket"));
   const fields = [FIELDS.name, FIELDS.phone, { name: "email", label: "Email", type: "email" }];
   bindForm("ticketForm", { subject: `Ticket reservation: ${s.name}`, fields, doneTitle: "Your reservation is ready in WhatsApp",
     extra: () => `Day: ${$("#tday").selectedOptions[0].textContent}\nAdults: ${n}\nTotal: ${inr(price(n))}` });
@@ -1485,29 +1729,34 @@ const NAV = () => [
   ...(showState() === "upcoming" ? [["Tickets", "#/tickets", "/tickets"]] : [])
 ];
 
+const mqPhone = window.matchMedia("(max-width: 759px)");
+const mqShell = window.matchMedia("(max-width: 1099px)");
+const buzz = (p = 8) => { try { if (mqShell.matches && navigator.vibrate) navigator.vibrate(p); } catch {} };
+
 function drawChrome() {
   if (SITE.demoBanner && sessionStorageSafe("get") !== "1") {
     $("#demo").innerHTML = `<div class="demo"><div class="wrap"><span>Template preview: phone numbers, campuses, prices and projects are sample content.</span><button type="button" id="demoHide">Hide</button></div></div>`;
     $("#demoHide").onclick = () => { sessionStorageSafe("set"); $("#demo").innerHTML = ""; };
   }
-  const nav = NAV();
+  const nav = NAV(), wa = waURL(`Hi ${SITE.name}`);
   $("#hdr").innerHTML = `<div class="wrap hdr-in">
     <a class="brand" href="#/" aria-label="${esc(SITE.name)} home">${MARK}<span class="brand-word">UPS <span>Events</span></span></a>
     <nav class="nav" aria-label="Main">${nav.map(n => `<a href="${n[1]}" data-base="${n[2]}">${n[0]}</a>`).join("")}</nav>
     <div class="hdr-cta">
-      <a class="wa-link wide-only" href="${waURL(`Hi ${SITE.name}`)}" target="_blank" rel="noopener">${ICON.wa}WhatsApp</a>
+      <a class="wa-link wide-only" href="${wa}" target="_blank" rel="noopener">${ICON.wa}WhatsApp</a>
       <a class="btn btn--ghost btn--sm xl-only" href="#/screens/rates">See rates</a>
       <a class="btn btn--primary btn--sm wide-only" href="#/brief">Start a brief</a>
-      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mnav">${ICON.menu}<span>Menu</span></button>
-    </div></div>
-    <div class="mnav" id="mnav"><div class="wrap"><ul>
-      ${nav.map(n => `<li><a href="${n[1]}" data-base="${n[2]}">${n[0]}</a></li>${n[2] === "/screens" ? `<li class="sub"><a href="#/screens/availability" data-base="/screens/availability">Check availability</a></li><li class="sub"><a href="#/screens/rates" data-base="/screens/rates">Rates</a></li>` : ""}`).join("")}
-      <li><a href="#/vendors" data-base="/vendors">Vendors</a></li><li><a href="#/partner" data-base="/partner">Partner with us</a></li>
-    </ul></div></div>`;
-  const btn = $("#menuBtn"), panel = $("#mnav");
-  btn.onclick = () => { const open = !panel.classList.contains("open"); panel.classList.toggle("open", open); btn.setAttribute("aria-expanded", open); btn.innerHTML = (open ? ICON.close : ICON.menu) + `<span>${open ? "Close" : "Menu"}</span>`; };
+      <a class="icon-btn" href="${wa}" target="_blank" rel="noopener" aria-label="Message us on WhatsApp">${ICON.wa}</a>
+    </div></div>`;
 
-  $("#mbar").innerHTML = `<a class="btn btn--wa" href="${waURL(`Hi ${SITE.name}`)}" target="_blank" rel="noopener">${ICON.wa.replace("<svg", '<svg width="18" height="18"')}WhatsApp</a><a class="btn btn--primary" href="#/brief">Start a brief</a>`;
+  $("#tabbar").innerHTML = `
+    <a class="tab" href="#/" data-base="/"><span class="tab-ico">${IC.home}</span>Home</a>
+    <a class="tab" href="#/screens" data-base="/screens"><span class="tab-ico">${IC.screen}</span>Screens</a>
+    <a class="tab tab--brief" href="#/brief" data-base="/brief"><span class="tab-fab">${IC.plus}</span>Brief</a>
+    <a class="tab" href="#/events" data-base="/events"><span class="tab-ico">${IC.events}</span>Events</a>
+    <button class="tab" type="button" id="moreBtn" aria-haspopup="dialog" aria-expanded="false"><span class="tab-ico">${IC.grid}</span>More</button>`;
+  $("#moreBtn").onclick = e => Sheet.isOpen ? Sheet.close() : Sheet.open({ title: "Menu", html: moreHTML(), opener: e.currentTarget });
+  $(".sheet-x").innerHTML = IC.close;
 
   $("#foot").innerHTML = `<div class="wrap"><div class="foot-grid">
     <div><a class="brand" href="#/" aria-label="${esc(SITE.name)} home">${MARK}<span class="brand-word">UPS <span>Events</span></span></a>
@@ -1525,23 +1774,153 @@ function drawChrome() {
 }
 function sessionStorageSafe(op) { try { return op === "get" ? sessionStorage.getItem("ups-demo-hidden") : sessionStorage.setItem("ups-demo-hidden", "1"); } catch { return null; } }
 
-let podTimer = null;
-function initPod() {
-  const ads = $$("#podScreen .ad"), bar = $("#podBar"), no = $("#slotNo"), btn = $("#podToggle");
-  if (!ads.length) return;
-  const DUR = 3600; let i = 0, playing = !reduceMotion();
-  const runBar = () => { bar.classList.remove("run"); bar.style.transitionDuration = "0ms"; void bar.offsetWidth; bar.style.transitionDuration = DUR + "ms"; bar.classList.add("run"); };
-  const step = () => {
-    ads[i].classList.remove("on"); ads[i].setAttribute("aria-hidden", "true");
-    i = (i + 1) % ads.length; ads[i].classList.add("on"); ads[i].removeAttribute("aria-hidden");
-    no.textContent = i + 1; runBar();
+function moreHTML() {
+  const s = SITE.show, showOn = showState() === "upcoming";
+  const dest = [["Check availability", "#/screens/availability", IC.cal], ["Rates", "#/screens/rates", IC.rupee], ["Combined campaigns", "#/combined", IC.layers], ["Locations", "#/network", IC.pin],
+    ["Work", "#/work", IC.work], ["Vendors", "#/vendors", IC.store], ["Partner with us", "#/partner", IC.building], ["About and contact", "#/about", IC.info]];
+  return `<div class="quick">
+      <a class="quick-tile" href="${telURL()}">${IC.phone}<span>Call</span></a>
+      <a class="quick-tile quick-tile--wa" href="${waURL(`Hi ${SITE.name}`)}" target="_blank" rel="noopener">${ICON.wa}<span>WhatsApp</span></a>
+      <a class="quick-tile" href="mailto:${SITE.email}">${IC.mail}<span>Email</span></a>
+    </div>
+    ${showOn ? `<a class="sheet-promo" href="#/tickets"><div><b>${esc(s.name)}</b><span>${showDates()}</span></div><em>Get tickets</em></a>` : ""}
+    <nav class="dest" aria-label="More pages">${dest.map(d => `<a href="${d[1]}" data-base="${d[1].slice(1)}">${d[2]}<span>${d[0]}</span></a>`).join("")}</nav>
+    <p class="sheet-legal"><a href="#/screens/formats">Formats and specs</a><a href="#/screens/how-it-works">Booking terms</a><a href="#/privacy">Privacy</a><a href="#/terms">Terms</a></p>`;
+}
+
+/* ---------- Bottom sheet: menu on phones, and the availability summary ---------- */
+const Sheet = {
+  isOpen: false, pushed: false, ignorePop: false, afterPop: null, el: null, home: null, opener: null, pending: null,
+  outside: ["#demo", "#hdr", "#main", "#foot", "#tabbar", "#ctxbar", "#skip"],
+  open({ title, html, el, opener }) {
+    if (this.pending) { this.pending(); this.pending = null; }
+    const host = $("#sheetHost"), body = $("#sheetBody"), sheet = $(".sheet", host);
+    $("#sheetTitle").textContent = title;
+    if (el) { this.el = el; this.home = document.createComment("sheet-home"); el.before(this.home); body.replaceChildren(el); }
+    else { this.el = null; body.innerHTML = html; }
+    body.scrollTop = 0;
+    this.opener = opener || null;
+    opener?.setAttribute("aria-expanded", "true");
+    host.hidden = false; void host.offsetWidth; host.classList.add("open");
+    this.outside.forEach(q => $(q)?.setAttribute("inert", ""));
+    document.documentElement.classList.add("locked");
+    this.isOpen = true;
+    markCurrent(); buzz(6);
+    try { history.pushState({ upsSheet: 1 }, ""); this.pushed = true; } catch { this.pushed = false; }
+    setTimeout(() => sheet.focus({ preventScroll: true }), 40);
+  },
+  close(fromPop = false, then = null, instant = false) {
+    if (!this.isOpen) { then?.(); return; }
+    this.isOpen = false;
+    const host = $("#sheetHost"), sheet = $(".sheet", host);
+    host.classList.remove("open");
+    this.outside.forEach(q => $(q)?.removeAttribute("inert"));
+    document.documentElement.classList.remove("locked");
+    const opener = this.opener; this.opener = null;
+    opener?.setAttribute("aria-expanded", "false");
+    const finish = () => {
+      host.hidden = true; sheet.style.translate = "";
+      if (this.el && this.home) this.home.replaceWith(this.el);
+      this.el = null; this.home = null;
+    };
+    if (instant || reduceMotion()) finish();
+    else { this.pending = finish; setTimeout(() => { if (this.pending === finish) { finish(); this.pending = null; } }, 340); }
+    if (!then && opener?.isConnected) opener.focus({ preventScroll: true });
+    if (this.pushed && !fromPop) { this.pushed = false; this.ignorePop = true; this.afterPop = then; history.back(); }
+    else { this.pushed = false; then?.(); }
+  }
+};
+window.addEventListener("popstate", () => {
+  if (Sheet.ignorePop) { Sheet.ignorePop = false; const t = Sheet.afterPop; Sheet.afterPop = null; t?.(); return; }
+  if (Sheet.isOpen) Sheet.close(true);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && Sheet.isOpen) Sheet.close(); });
+$("#sheetHost").addEventListener("click", e => {
+  if (e.target.closest("[data-sheet-close]")) { Sheet.close(); return; }
+  const a = e.target.closest('a[href^="#/"]');
+  if (a && $("#sheetBody").contains(a)) {
+    e.preventDefault(); const href = a.getAttribute("href");
+    Sheet.close(false, () => { if (location.hash !== href) location.hash = href; else window.scrollTo(0, 0); });
+  }
+});
+(() => {   /* drag the sheet down to close it */
+  const sheet = $("#sheetHost .sheet"); let y0 = null, t0 = 0, dy = 0;
+  const start = e => { if (e.button > 0 || e.target.closest("button")) return; y0 = e.clientY; t0 = performance.now(); dy = 0; sheet.classList.add("dragging"); e.currentTarget.setPointerCapture?.(e.pointerId); };
+  const move = e => { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); sheet.style.translate = `0 ${dy}px`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; sheet.classList.remove("dragging");
+    const v = dy / Math.max(1, performance.now() - t0);
+    if (dy > 90 || (dy > 24 && v > .55)) Sheet.close(); else sheet.style.translate = "";
   };
-  const start = () => { clearInterval(podTimer); runBar(); podTimer = setInterval(step, DUR); };
-  const stop = () => { clearInterval(podTimer); podTimer = null; bar.classList.remove("run"); bar.style.transitionDuration = "0ms"; };
+  [".sheet-grab", ".sheet-head"].forEach(q => { const h = $(q, sheet); h.addEventListener("pointerdown", start); h.addEventListener("pointermove", move); h.addEventListener("pointerup", end); h.addEventListener("pointercancel", end); });
+})();
+
+/* ---------- Context bar: a page's main action, pinned above the tab bar on phones ---------- */
+let ctxIO = null;
+function setCtx(html) { const c = $("#ctxbar"); c.innerHTML = html; c.hidden = false; document.body.classList.add("has-ctx"); }
+function clearCtx() { const c = $("#ctxbar"); c.hidden = true; c.innerHTML = ""; c.classList.remove("away"); document.body.classList.remove("has-ctx"); ctxIO?.disconnect(); ctxIO = null; }
+function watchAway(target) {
+  if (!target || !("IntersectionObserver" in window)) return;
+  ctxIO = new IntersectionObserver(([en]) => $("#ctxbar").classList.toggle("away", en.isIntersecting), { threshold: .2 });
+  ctxIO.observe(target);
+}
+
+/* ---------- Swipe rails: dots that follow the scroll ---------- */
+function initRails() {
+  $$("#main .rail").forEach(rail => {
+    const items = [...rail.children]; if (items.length < 2) return;
+    const dots = document.createElement("div"); dots.className = "rail-dots";
+    dots.innerHTML = items.map((_, i) => `<button type="button" aria-label="Show ${i + 1} of ${items.length}" ${i ? "" : 'aria-current="true"'}></button>`).join("");
+    rail.after(dots);
+    const btns = [...dots.children];
+    btns.forEach((b, i) => b.onclick = () => rail.scrollTo({ left: items[i].offsetLeft - parseFloat(getComputedStyle(rail).paddingLeft || 0), behavior: reduceMotion() ? "auto" : "smooth" }));
+    if (!("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(ents => ents.forEach(en => {
+      if (!en.isIntersecting || !mqPhone.matches) return;
+      const k = items.indexOf(en.target);
+      btns.forEach((b, j) => j === k ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current"));
+    }), { root: rail, threshold: .6 });
+    items.forEach(it => io.observe(it));
+  });
+}
+
+/* ---------- Hero pod: a story-style ad loop (tap to skip, hold to pause, swipe) ---------- */
+function initPod() {
+  const scr = $("#podScreen"); if (!scr) return;
+  const ads = $$(".ad", scr), segs = $$(".segs i", scr), no = $("#slotNo"), btn = $("#podToggle");
+  const DUR = 3600; let i = 0, playing = !reduceMotion(), held = false, visible = true;
+  scr.style.setProperty("--dur", DUR + "ms");
+  const sync = () => scr.classList.toggle("paused", !playing || held || !visible || document.hidden);
+  const paint = () => {
+    ads.forEach((a, k) => { const on = k === i; a.classList.toggle("on", on); a.inert = !on; on ? a.removeAttribute("aria-hidden") : a.setAttribute("aria-hidden", "true"); });
+    segs.forEach((sg, k) => { sg.className = k < i ? "done" : ""; });
+    void segs[i].offsetWidth; segs[i].className = "now";
+    no.textContent = i + 1; sync();
+  };
+  const go = d => { i = (i + d + ads.length) % ads.length; paint(); };
+  segs.forEach(sg => sg.firstElementChild.addEventListener("animationend", () => { if (sg.className === "now" && playing && !held) go(1); }));
+
+  let downX = 0, downY = 0, holdT = null, suppress = false;
+  $$(".tap", scr).forEach(t => {
+    const release = () => { clearTimeout(holdT); if (held) { held = false; scr.classList.remove("held"); sync(); } };
+    t.addEventListener("pointerdown", e => { downX = e.clientX; downY = e.clientY; suppress = false; clearTimeout(holdT); holdT = setTimeout(() => { held = suppress = true; scr.classList.add("held"); sync(); buzz(5); }, 260); });
+    t.addEventListener("pointerup", e => { const dx = e.clientX - downX, dy = e.clientY - downY; release(); if (!suppress && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { suppress = true; go(dx < 0 ? 1 : -1); buzz(); } });
+    t.addEventListener("pointercancel", release); t.addEventListener("pointerleave", release);
+    t.addEventListener("contextmenu", e => e.preventDefault());
+    t.addEventListener("click", () => { if (suppress) { suppress = false; return; } go(t.classList.contains("tap--next") ? 1 : -1); buzz(); });
+  });
+
   const label = () => { btn.setAttribute("aria-pressed", String(!playing)); btn.innerHTML = (playing ? ICON.pause : ICON.play) + `<span>${playing ? "Pause" : "Play"}</span>`; };
-  btn.onclick = () => { playing = !playing; playing ? start() : stop(); label(); };
-  label(); if (playing) start();
-  initPod.vis = () => { if (!$("#podScreen")) return; if (document.hidden) stop(); else if (playing) start(); };
+  btn.onclick = () => { playing = !playing; label(); sync(); };
+  initPod.vis = sync;
+  initPod.io?.disconnect();
+  if ("IntersectionObserver" in window) { initPod.io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; sync(); }, { threshold: .15 }); initPod.io.observe(scr); }
+  label(); paint();
+}
+
+function markCurrent() {
+  const path = render.path || "/", base = "/" + (path.split("/")[1] || "");
+  $$("[data-base]").forEach(a => { const b = a.dataset.base; (b === path || (b !== "/" && base === b)) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"); });
 }
 
 function render() {
@@ -1549,30 +1928,57 @@ function render() {
   if (raw && !raw.startsWith("/")) return;             // plain in-page anchors
   const [path, qstr] = (raw || "/").split("?");
   const q = new URLSearchParams(qstr || "");
-  clearInterval(podTimer); podTimer = null;
+  if (Sheet.isOpen) Sheet.close(true, null, true);
+  clearCtx(); initPod.io?.disconnect(); initPod.vis = null;
   let view = null;
   for (const [re, fn] of ROUTES) { const m = path.match(re); if (m) { view = fn(m, q); break; } }
   if (!view) view = V.notFound();
   $("#main").innerHTML = view.html;
   document.title = `${view.title} | ${SITE.name}`;
-  const base = "/" + (path.split("/")[1] || "");
-  $$("[data-base]").forEach(a => { const b = a.dataset.base; const cur = b === path || (b !== "/" && base === b && !a.closest(".sub")); cur ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"); });
-  const panel = $("#mnav"); if (panel?.classList.contains("open")) $("#menuBtn").click();
+  render.path = path; markCurrent();
   view.init?.();
+  initRails();
   window.scrollTo(0, 0);
   const h1 = $("#main h1"); if (h1 && render.started) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
   render.started = true;
 }
+function navigate() {
+  if (document.startViewTransition && render.started && !reduceMotion()) document.startViewTransition(() => render());
+  else render();
+}
 
 document.addEventListener("click", e => {
   const j = e.target.closest("[data-jump]"); if (!j) return;
-  e.preventDefault(); const t = document.getElementById(j.dataset.jump);
-  if (t) { t.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" }); const f = t.querySelector("input,select,textarea"); setTimeout(() => f?.focus({ preventScroll: true }), reduceMotion() ? 0 : 450); }
+  e.preventDefault(); const t = document.getElementById(j.dataset.jump); if (!t) return;
+  t.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  const f = j.dataset.focus ? document.getElementById(j.dataset.focus) : t.querySelector("input,select,textarea");
+  setTimeout(() => f?.focus({ preventScroll: true }), reduceMotion() ? 0 : 520);
+});
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-share]"); if (!b) return;
+  const text = b.dataset.share, url = location.href;
+  if (navigator.share) { try { await navigator.share({ title: document.title, text, url }); } catch {} return; }
+  window.open(waURL(`${text} ${url}`), "_blank", "noopener");
 });
 $("#skip").addEventListener("click", e => { e.preventDefault(); const h = $("#main h1") || $("#main"); h.setAttribute("tabindex", "-1"); h.focus(); });
+(() => {   /* phones and tablets: header slides away while reading, comes back when scrolling up */
+  let lastY = scrollY, ticking = false; const hdr = $("#hdr");
+  addEventListener("scroll", () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const y = scrollY;
+      if (!mqShell.matches || y < 90) hdr.classList.remove("hdr--away");
+      else if (y > lastY + 6) hdr.classList.add("hdr--away");
+      else if (y < lastY - 6) hdr.classList.remove("hdr--away");
+      lastY = y; ticking = false;
+    });
+  }, { passive: true });
+  hdr.addEventListener("focusin", () => hdr.classList.remove("hdr--away"));
+})();
+mqPhone.addEventListener?.("change", () => { if (Sheet.isOpen && Sheet.el) Sheet.close(); });
 
 drawChrome();
-window.addEventListener("hashchange", render);
+window.addEventListener("hashchange", navigate);
 document.addEventListener("visibilitychange", () => initPod.vis?.());
 render();
 </script>
