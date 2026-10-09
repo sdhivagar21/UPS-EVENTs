@@ -600,7 +600,7 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
 .menu__links a span{display:block;transform:translateY(110%);transition:transform .55s var(--ease)}
 .menu-open .menu__links a span{transform:none}
 .menu__links li{overflow:hidden}
-.menu__links li:nth-child(2) span{transition-delay:.05s}.menu__links li:nth-child(3) span{transition-delay:.1s}.menu__links li:nth-child(4) span{transition-delay:.15s}.menu__links li:nth-child(5) span{transition-delay:.2s}.menu__links li:nth-child(6) span{transition-delay:.25s}
+.menu__links li:nth-child(2) span{transition-delay:.05s}.menu__links li:nth-child(3) span{transition-delay:.1s}.menu__links li:nth-child(4) span{transition-delay:.15s}.menu__links li:nth-child(5) span{transition-delay:.2s}.menu__links li:nth-child(6) span{transition-delay:.25s}.menu__links li:nth-child(7) span{transition-delay:.3s}
 .menu__foot{margin-top:36px;display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
 
 /* ==========================================================================
@@ -992,6 +992,9 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
 .form__status{font-size:var(--fs-s);color:var(--mist);max-width:52ch}
 .form__brief{grid-column:1/-1;display:none;gap:12px}
 .form__brief.is-on{display:grid}
+.vendors{border-top:1px solid var(--line)}
+.vendors h2{max-width:16ch}
+.vendors__steps{display:grid;gap:10px;padding-left:1.2em;color:var(--mist);font-size:var(--fs-s)}
 .form__brief textarea{min-height:180px;background:var(--night);border:1px solid var(--line);padding:16px;font-size:var(--fs-s);line-height:1.5}
 .btn--big{min-height:64px;padding:1em 2em;font-size:var(--fs-m)}
 
@@ -1234,7 +1237,7 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
 <header class="nav" id="nav">
   <a class="nav__logo" href="#top" aria-label="UPS Events, back to top"><svg viewBox="0 0 2016 656" role="img" aria-hidden="true"><use href="#ups-logo"/></svg></a>
   <nav class="nav__links" aria-label="Main">
-    <a href="#top">Home</a><a href="#story">About</a><a href="#events">Events</a><a href="#services">Services</a><a href="#journal">Journal</a><a href="#contact">Contact</a>
+    <a href="#top">Home</a><a href="#story">About</a><a href="#events">Events</a><a href="#services">Services</a><a href="#journal">Journal</a><a href="#vendors">Vendors</a><a href="#contact">Contact</a>
   </nav>
   <a class="btn btn--red nav__cta" href="#contact" data-cursor="open" data-magnetic>Plan your event</a>
   <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu"><span>Menu</span><i aria-hidden="true"></i></button>
@@ -1242,7 +1245,7 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
 
 <div class="menu" id="menu" aria-label="Menu">
   <ul class="menu__links display">
-    <li><a href="#top"><span>Home</span></a></li><li><a href="#story"><span>About</span></a></li><li><a href="#events"><span>Events</span></a></li><li><a href="#services"><span>Services</span></a></li><li><a href="#journal"><span>Journal</span></a></li><li><a href="#contact"><span>Contact</span></a></li>
+    <li><a href="#top"><span>Home</span></a></li><li><a href="#story"><span>About</span></a></li><li><a href="#events"><span>Events</span></a></li><li><a href="#services"><span>Services</span></a></li><li><a href="#journal"><span>Journal</span></a></li><li><a href="#vendors"><span>Vendors</span></a></li><li><a href="#contact"><span>Contact</span></a></li>
   </ul>
   <div class="menu__foot"><a class="btn btn--light" href="#contact">Plan your event</a><p class="tag-line">Making a difference</p></div>
 </div>
@@ -1407,6 +1410,51 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
   </div>
 </section>
 
+<section class="contact vendors" id="vendors" aria-labelledby="vendors-title">
+  <h2 class="display rise" id="vendors-title"><span class="mask"><span>Set up a stall</span></span><span class="mask"><span>at our events.</span></span></h2>
+  <div class="contact__grid">
+    <div class="contact__aside">
+      <h3>Vendor registration</h3>
+      <p class="muted">Food stalls, clothing, jewellery, crafts, games and services. Send us your details once and we will call you when an event fits what you sell.</p>
+      <ol class="vendors__steps">
+        <li>Fill in your stall details.</li>
+        <li>We check them against upcoming events.</li>
+        <li>We call you with the date, venue and stall fee.</li>
+      </ol>
+    </div>
+    <form class="form" id="vendorForm" novalidate>
+      <div class="field"><label for="v-name">Your name</label><input id="v-name" name="name" autocomplete="name" required><span class="field__err" aria-live="polite"></span></div>
+      <div class="field"><label for="v-business">Business or brand name</label><input id="v-business" name="business" autocomplete="organization" required><span class="field__err" aria-live="polite"></span></div>
+      <div class="field"><label for="v-phone">Phone or WhatsApp</label><input id="v-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required><span class="field__err" aria-live="polite"></span></div>
+      <div class="field"><label for="v-email">Email <small>(optional)</small></label><input id="v-email" name="email" type="email" autocomplete="email" inputmode="email"><span class="field__err" aria-live="polite"></span></div>
+      <div class="field"><label for="v-category">What you sell</label>
+        <select id="v-category" name="category" required>
+          <option value="">Choose one</option>
+          <option>Food and drinks</option><option>Clothing and textiles</option><option>Jewellery and accessories</option><option>Home and decor</option><option>Handicrafts and gifts</option><option>Kids, toys and games</option><option>Beauty and wellness</option><option>Services</option><option>Something else</option>
+        </select><span class="field__err" aria-live="polite"></span></div>
+      <div class="field"><label for="v-area">Based in</label><input id="v-area" name="area" placeholder="Area, city" autocomplete="address-level2"></div>
+      <div class="field"><label for="v-stall">Stall space</label>
+        <select id="v-stall" name="stall"><option value="">Choose one</option><option>Table only</option><option>One canopy (10 x 10 ft)</option><option>Two canopies</option><option>Own setup or food truck</option></select></div>
+      <div class="field"><label for="v-power">Power needed</label>
+        <select id="v-power" name="power"><option value="">Choose one</option><option>No</option><option>Yes, lights only</option><option>Yes, appliances</option></select></div>
+      <div class="field"><label for="v-events">Events you want</label>
+        <select id="v-events" name="events"><option value="">Any event</option><option>Apartment communities</option><option>IT parks and offices</option><option>Colleges</option><option>Malls</option></select></div>
+      <div class="field"><label for="v-links">Instagram or website <small>(optional)</small></label><input id="v-links" name="links" inputmode="url"></div>
+      <div class="field"><label for="v-licence">FSSAI or GST number <small>(optional)</small></label><input id="v-licence" name="licence"></div>
+      <div class="field field--full"><label for="v-products">Products and price range</label><textarea id="v-products" name="products" required placeholder="What you will sell, and roughly what it costs"></textarea><span class="field__err" aria-live="polite"></span></div>
+      <div class="form__foot">
+        <p class="form__status" id="vendorStatus" aria-live="polite">We need your name, business, phone, what you sell and your products.</p>
+        <button class="btn btn--red btn--big" type="submit" data-cursor="open" data-magnetic>Register as a vendor</button>
+      </div>
+      <div class="form__brief" id="vendorBrief">
+        <label for="v-brief">Your vendor details</label>
+        <textarea id="v-brief" readonly></textarea>
+        <div><button class="btn" type="button" id="copyVendor">Copy details</button></div>
+      </div>
+    </form>
+  </div>
+</section>
+
 </main>
 
 <footer class="footer" id="footer">
@@ -1416,7 +1464,7 @@ body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;op
   </div>
   <nav aria-label="Footer">
     <h2>Explore</h2>
-    <ul><li><a href="#top">Home</a></li><li><a href="#story">About</a></li><li><a href="#events">Past events</a></li><li><a href="#services">Services</a></li><li><a href="#journal">Journal</a></li><li><a href="#contact">Contact</a></li></ul>
+    <ul><li><a href="#top">Home</a></li><li><a href="#story">About</a></li><li><a href="#events">Past events</a></li><li><a href="#services">Services</a></li><li><a href="#journal">Journal</a></li><li><a href="#vendors">Vendors</a></li><li><a href="#contact">Contact</a></li></ul>
   </nav>
   <div id="footerSocial"></div>
   <div class="footer__base"><span>© <span id="year"></span> UPS Events. All photographs are from UPS events.</span><span class="tag-line">Making a difference</span></div>
@@ -1465,6 +1513,10 @@ const SITE = {
     email: "",       // e.g. "hello@upsevents.in" (form falls back to email)
     address: ""      // e.g. "Pallikaranai, Chennai 600100"
   },
+  // Vendor registrations. Paste a Google Apps Script web app URL here (see README)
+  // and every vendor form lands as a row in your "Vendors" Google Sheet.
+  // Left empty, the vendor form sends through WhatsApp or email like the contact form.
+  vendorSheet: "",
   social: {          // official accounts only; empty ones are hidden
     instagram: "", facebook: "", linkedin: "", youtube: ""
   }
@@ -2688,6 +2740,44 @@ function renderContact() {
   $('#copyBrief').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#f-brief').value); $('#copyBrief').textContent = 'Copied'; } catch { $('#f-brief').select(); } });
 }
 
+/* ---------- vendor registration ---------- */
+const VENDOR_FIELDS = [['Business', 'business'], ['Phone', 'phone'], ['Email', 'email'], ['Category', 'category'], ['Based in', 'area'], ['Stall space', 'stall'], ['Power', 'power'], ['Events wanted', 'events'], ['Instagram or website', 'links'], ['FSSAI or GST', 'licence']];
+function renderVendors() {
+  const c = SITE.contact, form = $('#vendorForm'), status = $('#vendorStatus'), btn = form.querySelector('[type="submit"]');
+  const err = (id, msg) => { const f = $(id).closest('.field'); f.classList.toggle('has-error', !!msg); const e = f.querySelector('.field__err'); if (e) e.textContent = msg || ''; if (msg) $(id).setAttribute('aria-invalid', 'true'); else $(id).removeAttribute('aria-invalid'); };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries([...new FormData(form).entries()].map(([k, v]) => [k, v.trim()]));
+    const checks = [
+      ['#v-name', d.name ? '' : 'Add your name.'],
+      ['#v-business', d.business ? '' : 'Add your business or brand name.'],
+      ['#v-phone', !d.phone ? 'Add a phone number.' : (d.phone.replace(/\D/g, '').length < 8 ? 'Check the phone number.' : '')],
+      ['#v-email', d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) ? 'Check the email address.' : ''],
+      ['#v-category', d.category ? '' : 'Choose what you sell.'],
+      ['#v-products', d.products ? '' : 'Tell us what you will sell.']
+    ];
+    checks.forEach(([id, msg]) => err(id, msg));
+    const bad = checks.find(([, msg]) => msg);
+    if (bad) { status.textContent = 'A few details need fixing before we can send this.'; $(bad[0]).focus(); return; }
+    if (SITE.vendorSheet) {
+      btn.disabled = true; status.textContent = 'Sending your details…';
+      try {
+        await fetch(SITE.vendorSheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ ...d, submitted: new Date().toISOString() }) });
+        form.reset(); status.textContent = 'Thank you. Your vendor details have reached UPS Events and we will call you.';
+      } catch { status.textContent = 'That did not send. Check your connection and try again.'; }
+      btn.disabled = false; return;
+    }
+    const lines = ['Hi UPS Events, I would like to set up a stall at your events.', '', `Vendor registration: ${d.name}`];
+    VENDOR_FIELDS.forEach(([k, f]) => d[f] && lines.push(`${k}: ${d[f]}`));
+    lines.push('', `Products: ${d.products}`);
+    const text = lines.join('\n');
+    if (c.whatsapp) { window.open(`https://wa.me/${c.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener'); status.textContent = 'WhatsApp opened with your details. Send it there and we will reply.'; }
+    else if (c.email) { location.href = `mailto:${c.email}?subject=${encodeURIComponent('Vendor registration: ' + d.business)}&body=${encodeURIComponent(text)}`; status.textContent = 'Your email app opened with your details. Send it and we will reply.'; }
+    else { $('#vendorBrief').classList.add('is-on'); $('#v-brief').value = text; status.textContent = 'Your details are ready below. Copy them and send them to UPS Events.'; }
+  });
+  $('#copyVendor').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#v-brief').value); $('#copyVendor').textContent = 'Copied'; } catch { $('#v-brief').select(); } });
+}
+
 /* ---------- overlays: event and article ---------- */
 const eventView = $('#eventView'), articleView = $('#articleView');
 let openView = null, lastTrigger = null, pushedFromPage = false;
@@ -2902,7 +2992,7 @@ function sectionSpy() {
   const links = $$('.nav__links a');
   const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { links.forEach(a => a.removeAttribute('aria-current')); const id = e.target.id === 'archive' || e.target.id === 'gallery' || e.target.id === 'watch' ? 'events' : e.target.id; map.get(id) && map.get(id).setAttribute('aria-current', 'true'); } }), { rootMargin: '-45% 0px -50% 0px' });
-  ['top', 'story', 'events', 'archive', 'gallery', 'watch', 'journal', 'services', 'contact'].forEach(id => { const s = document.getElementById(id); s && io.observe(s); });
+  ['top', 'story', 'events', 'archive', 'gallery', 'watch', 'journal', 'services', 'vendors', 'contact'].forEach(id => { const s = document.getElementById(id); s && io.observe(s); });
 }
 
 /* ---------- cursor + magnetic ---------- */
@@ -2997,7 +3087,7 @@ function fab() {
 
 /* ---------- boot ---------- */
 renderStory(); renderStats(); renderWorlds(); renderArchive(); renderGalleryFilters(); setGallery('all');
-renderFilms(); renderJournal(); renderServices(); renderWhy(); renderVenues(); renderContact();
+renderFilms(); renderJournal(); renderServices(); renderWhy(); renderVenues(); renderContact(); renderVendors();
 $('#galleryMore').addEventListener('click', moreGallery);
 $('#loaderSkip') && $('#loaderSkip').addEventListener('click', () => {});
 intro(); route();
