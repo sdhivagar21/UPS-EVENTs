@@ -213,8 +213,6 @@ ul,ol{padding:0;list-style:none}
 .story__text{grid-column:8/13;grid-row:2;display:grid;gap:18px;align-self:end}
 .story__big{font-size:clamp(3rem,1.4rem + 5.6vw,8rem);font-weight:800;font-stretch:125%;line-height:.85;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1.5px var(--paper)}
 .story__panel h3{font-size:var(--fs-xl);font-weight:700;font-stretch:112%;line-height:1.05;text-transform:uppercase}
-.story__venues{display:flex;flex-wrap:wrap;gap:8px}
-.story__venues li{font-size:var(--fs-xs);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .story__progress{position:absolute;left:var(--pad);right:var(--pad);bottom:28px;height:1px;background:var(--line)}
 .story__progress span{position:absolute;inset:0;background:var(--red);transform-origin:left;transform:scaleX(0)}
 .story__hint{position:absolute;right:var(--pad);bottom:40px;font-size:var(--fs-s);color:var(--mist);text-decoration:none;display:inline-flex;gap:8px;align-items:center;min-height:44px}
@@ -258,16 +256,6 @@ ul,ol{padding:0;list-style:none}
 /* ==========================================================================
    Numbers
    ========================================================================== */
-.stats{background:var(--navy);padding:clamp(56px,9vw,120px) var(--pad);position:relative;overflow:hidden}
-.stats__mark{position:absolute;right:-6%;bottom:-22%;width:min(60vw,720px);opacity:.14;pointer-events:none}
-.stats__mark path{fill:#fff}
-.stats__head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 40px;align-items:end;margin-bottom:clamp(40px,6vw,80px)}
-.stats__head h2{font-size:var(--fs-xl);font-weight:700;font-stretch:112%;text-transform:uppercase;line-height:1}
-.stats__head p{max-width:46ch;color:rgba(244,245,250,.8)}
-.stats__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;position:relative}
-.stat{border-top:1px solid rgba(244,245,250,.35);padding-top:18px;display:grid;gap:8px}
-.stat__num{font-size:clamp(3.4rem,2rem + 6vw,8.5rem);font-weight:800;font-stretch:125%;line-height:.85;font-variant-numeric:tabular-nums}
-.stat__label{color:rgba(244,245,250,.85);font-size:var(--fs-s)}
 
 /* ==========================================================================
    Past events — the worlds
@@ -574,9 +562,17 @@ ul,ol{padding:0;list-style:none}
 .form__status{font-size:var(--fs-s);color:var(--mist);max-width:52ch}
 .form__brief{grid-column:1/-1;display:none;gap:12px}
 .form__brief.is-on{display:grid}
-.vendors{border-top:1px solid var(--line)}
-.vendors h2{max-width:16ch}
-.vendors__steps{display:grid;gap:10px;padding-left:1.2em;color:var(--mist);font-size:var(--fs-s)}
+.vband{background:var(--navy);padding:clamp(40px,6vw,72px) var(--pad);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:20px clamp(32px,5vw,80px);align-items:end}
+.vband h2{font-size:var(--fs-xl);font-weight:700;font-stretch:112%;text-transform:uppercase;line-height:1}
+.vband__text p{margin-top:12px;color:rgba(244,245,250,.88)}
+.vband__form{display:grid;grid-template-columns:1fr 1fr auto;gap:6px 24px;align-items:end}
+.vband__form>.btn{margin-bottom:calc(1em + 8px)}
+.vband .field input{border-bottom-color:rgba(244,245,250,.55)}
+.vband .field input:focus{border-bottom-color:var(--paper)}
+.vband .field__err{color:#FFD0D0}
+.vband .form__status{grid-column:1/-1;color:rgba(244,245,250,.9)}
+.vband .form__status:empty{display:none}
+.vband .form__brief textarea{background:rgba(5,6,26,.4)}
 .form__brief textarea{min-height:180px;background:var(--night);border:1px solid var(--line);padding:16px;font-size:var(--fs-s);line-height:1.5}
 .btn--big{min-height:64px;padding:1em 2em;font-size:var(--fs-m)}
 
@@ -713,7 +709,6 @@ ul,ol{padding:0;list-style:none}
   .story__panel>.story__big,.story__panel:nth-child(odd)>.story__big{text-align:left;font-size:clamp(2.4rem,13vw,4rem)}
   .story__progress,.story__hint{display:none}
   .story__swipe{display:flex}
-  .stats__grid{grid-template-columns:1fr 1fr;gap:28px 16px}
   /* worlds */
   .world--carpet .world__stage{height:78svh;margin-inline:0}
   .world--split .world__text,.world--split .world__pics{grid-column:1/-1;position:static}
@@ -771,6 +766,9 @@ ul,ol{padding:0;list-style:none}
   .contact__grid{grid-template-columns:1fr}
   .contact__aside{position:static}
   .form{grid-template-columns:1fr}
+  .vband{grid-template-columns:1fr}
+  .vband__form{grid-template-columns:1fr}
+  .vband__form>.btn{justify-self:start;margin-bottom:0}
   .footer{grid-template-columns:1fr}
   .view__hero{height:72svh;margin-top:-76px}
   .facts,.view__about{grid-column:1/-1}
@@ -829,11 +827,29 @@ ul,ol{padding:0;list-style:none}
   <div class="hero__content">
     <h1 class="hero__title display" id="heroTitle"><span class="sr-only">UPS Events: </span><span class="mask"><span>We create</span></span><span class="mask"><span>moments</span></span><span class="mask"><span>that become</span></span><span class="mask"><span>memories.</span></span></h1>
     <div class="hero__under" id="heroUnder">
-      <p class="hero__lede">UPS Events brings festivals, family days, markets and brand displays to apartment communities, IT parks, malls and colleges across Chennai.</p>
+      <p class="hero__lede">Festivals, family days and markets across Chennai.</p>
       <a class="hero__explore" href="#events" data-magnetic>Explore our events <b aria-hidden="true">↓</b></a>
     </div>
     <div class="hero__now" id="heroNow" aria-live="off"><div class="hero__bars" aria-hidden="true"><span class="is-active"></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span></div><span>Now showing</span><a href="#/events/marina-mall" data-cursor="explore">Marina Mall Activity</a></div>
   </div>
+</section>
+
+<section class="vband" id="vendors" aria-labelledby="vendors-title">
+  <div class="vband__text">
+    <h2 id="vendors-title">Sell at our events</h2>
+    <p>Leave your name and number. We'll call you.</p>
+  </div>
+  <form class="vband__form" id="vendorForm" novalidate>
+    <div class="field"><label for="v-name">Name</label><input id="v-name" name="name" autocomplete="name" required><span class="field__err" aria-live="polite"></span></div>
+    <div class="field"><label for="v-phone">Phone number</label><input id="v-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required><span class="field__err" aria-live="polite"></span></div>
+    <button class="btn btn--red" type="submit" data-cursor="open">Register</button>
+    <p class="form__status" id="vendorStatus" aria-live="polite"></p>
+    <div class="form__brief" id="vendorBrief">
+      <label for="v-brief">Your details</label>
+      <textarea id="v-brief" readonly></textarea>
+      <div><button class="btn" type="button" id="copyVendor">Copy</button></div>
+    </div>
+  </form>
 </section>
 
 <section class="story" id="story" aria-labelledby="story-title">
@@ -845,19 +861,9 @@ ul,ol{padding:0;list-style:none}
   </div>
 </section>
 
-<section class="stats" aria-labelledby="stats-title">
-  <svg class="stats__mark" viewBox="0 0 612 460" aria-hidden="true"><use href="#ups-mark"/></svg>
-  <div class="stats__head">
-    <h2 id="stats-title">The archive so far</h2>
-    <p>Counted from the photographs and films in this site's archive. Every new event added to the archive updates these numbers.</p>
-  </div>
-  <div class="stats__grid" id="stats"></div>
-</section>
-
 <section class="events" id="events" aria-labelledby="events-title">
   <header class="events__head">
     <h2 class="display rise" id="events-title"><span class="mask"><span>Past</span></span><span class="mask"><span>events</span></span></h2>
-    <p class="lede fade">Six events, each in its own world. The full archive, with every event and every photograph, follows.</p>
     <nav class="jump fade" id="jump" aria-label="Jump to an event"></nav>
   </header>
   <div id="worlds"></div>
@@ -878,7 +884,6 @@ ul,ol{padding:0;list-style:none}
   <div class="gallery__head">
     <h2 class="display" id="gallery-title">Every frame</h2>
     <div>
-      <p class="muted" style="margin-bottom:16px">Photographs from every event in the archive. Select any picture to see it full screen.</p>
       <div class="filter-row" id="galleryFilters" role="group" aria-label="Filter photographs"></div>
     </div>
   </div>
@@ -889,7 +894,6 @@ ul,ol{padding:0;list-style:none}
 <section class="cv watch" id="watch" aria-labelledby="watch-title">
   <div class="watch__head">
     <h2 class="display" id="watch-title">Watch the<br>experience</h2>
-    <p class="muted" style="max-width:40ch">Films shot on the day. They load only when you press play.</p>
   </div>
   <div class="watch__grid">
     <div class="player is-paused" id="player" data-cursor="play">
@@ -914,7 +918,6 @@ ul,ol{padding:0;list-style:none}
   <div class="journal__head">
     <h2 class="display rise" id="journal-title"><span class="mask"><span>UPS</span></span><span class="mask"><span>Journal</span></span></h2>
     <div>
-      <p class="lede">Stories from past events, how they were set up, and what we've learned about putting on a good day.</p>
       <div class="journal__cats" id="journalCats" role="group" aria-label="Filter stories"></div>
     </div>
   </div>
@@ -925,7 +928,6 @@ ul,ol{padding:0;list-style:none}
   <div class="services__bg" id="servicesBg" aria-hidden="true"></div>
   <div class="services__head">
     <h2 class="display" id="services-title">What we do</h2>
-    <p class="muted" style="max-width:40ch">Everything below appears in the photographs from our past events. Hover or tap a line to see it.</p>
   </div>
   <ul id="svcList"></ul>
 </section>
@@ -938,7 +940,6 @@ ul,ol{padding:0;list-style:none}
 <section class="cv venues" aria-labelledby="venues-title">
   <div class="venues__head">
     <h2 id="venues-title">Where we've set up</h2>
-    <p class="muted">Venues and hosts from the archive</p>
   </div>
   <div class="marquee" id="marqueeA"></div>
   <div class="marquee marquee--rev" id="marqueeB" aria-hidden="true"></div>
@@ -949,12 +950,11 @@ ul,ol{padding:0;list-style:none}
   <div class="contact__grid">
     <div class="contact__aside">
       <h3>Plan an event with UPS</h3>
-      <p class="muted">Tell us what you're planning. The more you share about the date, the space and the crowd, the faster we can come back with a plan.</p>
+      <p class="muted">Tell us the date, place and crowd. We'll come back with a plan.</p>
       <dl class="contact__list" id="contactList"></dl>
     </div>
     <form class="form" id="form" novalidate>
       <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="f-company">Company or community <small>(optional)</small></label><input id="f-company" name="company" autocomplete="organization"></div>
       <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email"><span class="field__err" aria-live="polite"></span></div>
       <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"><span class="field__err" aria-live="polite"></span></div>
       <div class="field"><label for="f-type">Event type</label>
@@ -964,11 +964,9 @@ ul,ol{padding:0;list-style:none}
         </select><span class="field__err" aria-live="polite"></span></div>
       <div class="field"><label for="f-date">Event date <small>(if you know it)</small></label><input id="f-date" name="date" type="date"></div>
       <div class="field"><label for="f-location">Location</label><input id="f-location" name="location" placeholder="Venue, campus or community"></div>
-      <div class="field"><label for="f-audience">Estimated audience</label>
-        <select id="f-audience" name="audience"><option value="">Choose a range</option><option>Under 100</option><option>100 to 300</option><option>300 to 1,000</option><option>1,000 to 3,000</option><option>More than 3,000</option></select></div>
       <div class="field field--full"><label for="f-msg">Message</label><textarea id="f-msg" name="message" placeholder="What's the occasion, and what would make it a good day?"></textarea></div>
       <div class="form__foot">
-        <p class="form__status" id="formStatus" aria-live="polite">We need your name, the event type, and an email or phone number.</p>
+        <p class="form__status" id="formStatus" aria-live="polite">Name, event type and a phone or email.</p>
         <button class="btn btn--red btn--big" type="submit" data-cursor="open" data-magnetic>Start a conversation</button>
       </div>
       <div class="form__brief" id="formBrief">
@@ -980,57 +978,12 @@ ul,ol{padding:0;list-style:none}
   </div>
 </section>
 
-<section class="cv contact vendors" id="vendors" aria-labelledby="vendors-title">
-  <h2 class="display rise" id="vendors-title"><span class="mask"><span>Set up a stall</span></span><span class="mask"><span>at our events.</span></span></h2>
-  <div class="contact__grid">
-    <div class="contact__aside">
-      <h3>Vendor registration</h3>
-      <p class="muted">Food stalls, clothing, jewellery, crafts, games and services. Send us your details once and we will call you when an event fits what you sell.</p>
-      <ol class="vendors__steps">
-        <li>Fill in your stall details.</li>
-        <li>We check them against upcoming events.</li>
-        <li>We call you with the date, venue and stall fee.</li>
-      </ol>
-    </div>
-    <form class="form" id="vendorForm" novalidate>
-      <div class="field"><label for="v-name">Your name</label><input id="v-name" name="name" autocomplete="name" required><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="v-business">Business or brand name</label><input id="v-business" name="business" autocomplete="organization" required><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="v-phone">Phone or WhatsApp</label><input id="v-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="v-email">Email <small>(optional)</small></label><input id="v-email" name="email" type="email" autocomplete="email" inputmode="email"><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="v-category">What you sell</label>
-        <select id="v-category" name="category" required>
-          <option value="">Choose one</option>
-          <option>Food and drinks</option><option>Clothing and textiles</option><option>Jewellery and accessories</option><option>Home and decor</option><option>Handicrafts and gifts</option><option>Kids, toys and games</option><option>Beauty and wellness</option><option>Services</option><option>Something else</option>
-        </select><span class="field__err" aria-live="polite"></span></div>
-      <div class="field"><label for="v-area">Based in</label><input id="v-area" name="area" placeholder="Area, city" autocomplete="address-level2"></div>
-      <div class="field"><label for="v-stall">Stall space</label>
-        <select id="v-stall" name="stall"><option value="">Choose one</option><option>Table only</option><option>One canopy (10 x 10 ft)</option><option>Two canopies</option><option>Own setup or food truck</option></select></div>
-      <div class="field"><label for="v-power">Power needed</label>
-        <select id="v-power" name="power"><option value="">Choose one</option><option>No</option><option>Yes, lights only</option><option>Yes, appliances</option></select></div>
-      <div class="field"><label for="v-events">Events you want</label>
-        <select id="v-events" name="events"><option value="">Any event</option><option>Apartment communities</option><option>IT parks and offices</option><option>Colleges</option><option>Malls</option></select></div>
-      <div class="field"><label for="v-links">Instagram or website <small>(optional)</small></label><input id="v-links" name="links" inputmode="url"></div>
-      <div class="field"><label for="v-licence">FSSAI or GST number <small>(optional)</small></label><input id="v-licence" name="licence"></div>
-      <div class="field field--full"><label for="v-products">Products and price range</label><textarea id="v-products" name="products" required placeholder="What you will sell, and roughly what it costs"></textarea><span class="field__err" aria-live="polite"></span></div>
-      <div class="form__foot">
-        <p class="form__status" id="vendorStatus" aria-live="polite">We need your name, business, phone, what you sell and your products.</p>
-        <button class="btn btn--red btn--big" type="submit" data-cursor="open" data-magnetic>Register as a vendor</button>
-      </div>
-      <div class="form__brief" id="vendorBrief">
-        <label for="v-brief">Your vendor details</label>
-        <textarea id="v-brief" readonly></textarea>
-        <div><button class="btn" type="button" id="copyVendor">Copy details</button></div>
-      </div>
-    </form>
-  </div>
-</section>
-
 </main>
 
 <footer class="cv footer" id="footer">
   <div class="footer__about">
     <svg class="footer__logo" viewBox="0 0 2016 656" role="img" aria-label="UPS Events, making a difference"><use href="#ups-logo"/></svg>
-    <p>UPS Events puts on festival celebrations, family days, markets and brand displays at apartment communities, IT parks, malls and colleges across Chennai.</p>
+    <p>Festivals, family days and markets across Chennai.</p>
   </div>
   <nav aria-label="Footer">
     <h2>Explore</h2>
@@ -1085,6 +1038,9 @@ const SITE = {
   // and every vendor form lands as a row in your "Vendors" Google Sheet.
   // Left empty, the vendor form sends through WhatsApp or email like the contact form.
   vendorSheet: "",
+  // Events added from the admin page (upsevents.in/admin). Paste your Supabase Project URL and
+  // publishable (anon) key here (see README). Left empty, the site shows only the events below.
+  supabase: { url: "", key: "" },
   social: {          // official accounts only; empty ones are hidden
     instagram: "", facebook: "", linkedin: "", youtube: ""
   }
@@ -1092,7 +1048,8 @@ const SITE = {
 
 /* ==========================================================================
    EVENT ARCHIVE
-   One object per event. To add an event:
+   The easy way to add an event is the admin page (yoursite/admin/), which needs no editing here.
+   The events below are built into the page. To add one by hand instead:
    1. Put its photos in images/web/<slug>/ as 01-s.webp (720px wide) and 01-l.webp (full size),
       02-s.webp / 02-l.webp and so on. Or skip the WebP step and give each image a `src`
       pointing at any JPEG, e.g. { src: "images/My event/photo.jpg", w: 1600, h: 1200, alt: "..." }.
@@ -1638,10 +1595,10 @@ const HERO_SLIDES = [["marina-mall", "01"], ["valentines-embassy", "04"], ["pong
 
 /* About section: the story told through the kinds of spaces UPS works in. */
 const STORY = [
-  {"big": "Courtyards", "title": "Apartment communities", "spaces": ["Apartment communities"], "image": ["apartment-festivals", "53"], "text": "Clubhouse markets, sports mornings, carnival nights and festival stages, set up in the spaces between the towers."},
-  {"big": "Campuses", "title": "IT parks and offices", "spaces": ["IT parks & offices"], "image": ["valentines-embassy", "06"], "text": "Forecourts, walkways and colonnades turned into markets, family days and festival sets for the people who work there."},
-  {"big": "Crowds", "title": "Malls and colleges", "spaces": ["Malls", "Colleges"], "image": ["onam-cit-college", "02"], "text": "A night market of lit tents outside a mall, and Onam on a college campus road packed with students."},
-  {"big": "15.08.24", "title": "The one date in the photographs", "image": ["apartment-festivals", "37"], "text": "Most photographs in the archive don't carry a date. One does: a stage backdrop for India's 78th Independence Day, which places it on 15 August 2024."}
+  {"big": "Courtyards", "title": "Apartment communities", "spaces": ["Apartment communities"], "image": ["apartment-festivals", "53"], "text": "Markets, sports days and festival stages between the towers."},
+  {"big": "Campuses", "title": "IT parks and offices", "spaces": ["IT parks & offices"], "image": ["valentines-embassy", "06"], "text": "Markets, family days and festival sets for the people who work there."},
+  {"big": "Crowds", "title": "Malls and colleges", "spaces": ["Malls", "Colleges"], "image": ["onam-cit-college", "02"], "text": "A night market outside a mall, and Onam on a college campus."},
+  {"big": "15.08.24", "title": "The one date in the photographs", "image": ["apartment-festivals", "37"], "text": "A stage for India's 78th Independence Day, 15 August 2024."}
 ];
 
 /* What we do: every service is shown in a photograph from the archive. */
@@ -1658,10 +1615,10 @@ const SERVICES = [
 
 /* Why UPS Events. {festivals} is filled in from the archive. */
 const WHY = [
-  {"title": "From courtyards to campuses", "text": "Apartment communities, IT parks and offices, a mall and a college campus. Each space gets a set-up made for it: a clubhouse market, a red carpet across a forecourt, a road lined with stalls."},
-  {"title": "The whole calendar", "text": "{festivals} all appear in the archive, alongside family days, carnival nights and expos."},
-  {"title": "Everything on the ground", "text": "Tents and stalls, décor and photo sets, stages, sound and lighting, games, trophies and performers. The photographs show all of it, put up for the day."},
-  {"title": "Something for every age", "text": "Craft tables, races and costume parades for children; markets, performances and prize-givings for everyone else."}
+  {"title": "From courtyards to campuses", "text": "A set-up made for each space."},
+  {"title": "The whole calendar", "text": "Pongal to Christmas, family days to expos."},
+  {"title": "Everything on the ground", "text": "Tents, stalls, décor, stage, sound, lights and games."},
+  {"title": "Something for every age", "text": "Races and crafts for kids, markets and shows for all."}
 ];
 
 /* UPS Journal. Blocks: ["p", text] ["h", heading] ["img", eventSlug, photoNumber, caption] ["quote", text] ["video", eventSlug, filmIndex, caption] ["cta"] */
@@ -1820,8 +1777,9 @@ const withPhotos = EVENTS.filter(e => e.images && e.images.length);
 const uniq = a => [...new Set(a.filter(Boolean))];
 const count = (arr, f) => arr.reduce((m, x) => (m[f(x)] = (m[f(x)] || 0) + 1, m), {});
 
-const srcOf = (ev, im, size) => im.src ? encodeURI(im.src) : `images/web/${ev.slug}/${im.n}-${size}.webp`;
-const srcsetOf = (ev, im) => im.src ? '' : `${srcOf(ev, im, 's')} 720w, ${srcOf(ev, im, 'l')} ${im.w}w`;
+// photos uploaded from the admin page carry their own URLs (full, and small when wider than 720px)
+const srcOf = (ev, im, size) => im.full ? (size === 's' && im.small ? im.small : im.full) : im.src ? encodeURI(im.src) : `images/web/${ev.slug}/${im.n}-${size}.webp`;
+const srcsetOf = (ev, im) => im.full ? (im.small ? `${im.small} 720w, ${im.full} ${im.w}w` : '') : im.src ? '' : `${srcOf(ev, im, 's')} 720w, ${srcOf(ev, im, 'l')} ${im.w}w`;
 function imgTag(ev, im, { sizes = '100vw', eager = false, alt } = {}) {
   const ss = srcsetOf(ev, im);
   return `<img src="${srcOf(ev, im, ss ? 's' : 'l')}"${ss ? ` srcset="${ss}" sizes="${sizes}"` : ''} width="${im.w}" height="${im.h}" alt="${esc(alt ?? im.alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="background:${im.c || '#0C0F33'}">`;
@@ -1839,12 +1797,32 @@ const evLink = ev => `#/events/${ev.slug}`;
 const artLink = a => `#/journal/${a.slug}`;
 const CHEV_SVG = `<svg class="chev-icon" viewBox="0 0 612 460" aria-hidden="true"><use href="#ups-mark"/></svg>`;
 
+/* ---------- events added from the admin page ----------
+   Published events live in Supabase (see README). The request starts now, while the hero paints,
+   and the rest of the page waits for it (at most 2.5 s) so new events land in every section. */
+const SB = SITE.supabase || {}, SB_URL = String(SB.url || '').replace(/\/+$/, '');
+const sbFile = p => p ? `${SB_URL}/storage/v1/object/public/media/${p}` : '';
+const remoteRows = SB_URL && SB.key ? Promise.race([
+  fetch(`${SB_URL}/rest/v1/events?select=*&published=is.true&order=created_at.desc`, { headers: { apikey: SB.key } }).then(r => r.ok ? r.json() : []).catch(() => []),
+  new Promise(r => setTimeout(() => r([]), 2500))
+]) : Promise.resolve([]);
+function fromRow(r) {
+  const images = (r.photos || []).filter(p => p && p.full).map((p, i) => ({ n: String(p.id || pad2(i + 1)), w: p.w || 1600, h: p.h || 1200, c: p.c || '#0C0F33', alt: p.alt || r.name, full: sbFile(p.full), small: sbFile(p.small) }));
+  const videos = (r.videos || []).filter(v => v && v.path).map((v, i) => ({ src: sbFile(v.path), poster: sbFile(v.poster) || (images[0] ? images[0].small || images[0].full : ''), title: v.title || `Film ${i + 1}`, duration: v.duration || 0 }));
+  const auto = videos.length ? 'film' : images.length >= 6 ? 'mosaic' : images.length >= 3 ? 'split' : 'carpet';
+  const layout = !r.layout || r.layout === 'auto' || (r.layout === 'film' && !videos.length) ? auto : r.layout;
+  return { slug: r.slug, eventName: r.name, year: r.year || null, date: r.date || null, location: r.venue, category: r.category || 'Festivals', space: r.space || r.venue,
+    occasion: r.occasion || r.category, client: r.client || undefined, featured: r.showcase || null, layout, cover: r.cover || null, summary: r.summary || '',
+    description: r.description || r.summary || '', highlights: r.highlights || [], participants: [], sponsors: [], relatedArticles: [], videos, images,
+    remote: true, front: !!r.on_front, inGallery: r.in_gallery !== false, inFilms: r.in_films !== false };
+}
+
 /* ---------- hero ---------- */
 const heroMedia = $('#heroMedia');
 const slides = HERO_SLIDES.map(([slug, n]) => ({ ev: BY[slug], im: getImg(slug, n) })).filter(s => s.ev && s.im);
 // slide 1 and its caption ship in the HTML so the hero paints before any script runs
 heroMedia.insertAdjacentHTML('beforeend', slides.slice(1).map(() => '<figure class="hero__slide"></figure>').join(''));
-const heroSrcset = s => s.im.src ? '' : `images/web/${s.ev.slug}/${s.im.n}-h.webp 800w, ${srcOf(s.ev, s.im, 'l')} ${s.im.w}w`;
+const heroSrcset = s => s.im.full ? srcsetOf(s.ev, s.im) : s.im.src ? '' : `images/web/${s.ev.slug}/${s.im.n}-h.webp 800w, ${srcOf(s.ev, s.im, 'l')} ${s.im.w}w`;
 let heroIndex = 0, heroTimer = null, heroVisible = true;
 function heroCaption() {
   const s = slides[heroIndex];
@@ -1852,7 +1830,7 @@ function heroCaption() {
 }
 function loadSlide(i) {
   const fig = heroMedia.children[i];
-  if (fig && !fig.firstChild) { const s = slides[i], ss = heroSrcset(s); fig.innerHTML = `<img src="${ss ? `images/web/${s.ev.slug}/${s.im.n}-h.webp` : srcOf(s.ev, s.im, 'l')}"${ss ? ` srcset="${ss}" sizes="100vw"` : ''} width="${s.im.w}" height="${s.im.h}" alt="" decoding="async">`; }
+  if (fig && !fig.firstChild) { const s = slides[i], ss = heroSrcset(s), src = s.im.full ? srcOf(s.ev, s.im, 's') : ss ? `images/web/${s.ev.slug}/${s.im.n}-h.webp` : srcOf(s.ev, s.im, 'l'); fig.innerHTML = `<img src="${src}"${ss ? ` srcset="${ss}" sizes="100vw"` : ''} width="${s.im.w}" height="${s.im.h}" alt="" decoding="async">`; }
 }
 function nextSlide() {
   if (!heroVisible || document.hidden) return;
@@ -1871,28 +1849,21 @@ function startHero() {
 }
 
 /* ---------- story ---------- */
-const venuesIn = spaces => uniq(EVENTS.filter(e => spaces.includes(e.space) && !e.venueGeneric).map(e => e.location));
 function renderStory() {
   const total = EVENTS.length;
   const panels = STORY.map((p, i) => {
     const im = getImg(p.image[0], p.image[1]); const ev = BY[p.image[0]];
-    const venues = p.spaces ? venuesIn(p.spaces) : [];
     return `<article class="story__panel">
       <p class="story__big" aria-hidden="true">${esc(p.big)}</p>
       <figure class="chev">${shot(ev, im, { sizes: '(min-width:900px) 50vw, 84vw', chev: false, cap: false })}</figure>
-      <div class="story__text fade">
-        <h3>${esc(p.title)}</h3>
-        <p class="muted">${esc(p.text)}</p>
-        ${venues.length ? `<ul class="story__venues" aria-label="Venues">${venues.map(v => `<li>${esc(v)}</li>`).join('')}</ul>` : ''}
-      </div></article>`;
+      <div class="story__text fade"><h3>${esc(p.title)}</h3><p class="muted">${esc(p.text)}</p></div></article>`;
   }).join('');
   $('#storyTrack').innerHTML = `
     <article class="story__panel story__panel--intro">
       <h2 class="display rise" id="story-title"><span class="mask"><span>The story</span></span><span class="mask"><span>of UPS</span></span></h2>
       <div class="story__intro-row fade">
         <p class="tag-line" style="color:var(--red)">${esc(SITE.tagline)}</p>
-        <p class="lede">UPS Events sets up the days people look forward to: festivals, family days, markets and carnival nights, in the places where people already live, work and study.</p>
-        <p class="muted" style="max-width:34ch">This is that story, told through the photographs in our archive. Where a date can be read from a photograph, we've used it. Where it can't, we've left it out.</p>
+        <p class="lede">Festivals, family days and markets where people live, work and study.</p>
       </div>
     </article>
     ${panels}
@@ -1900,47 +1871,17 @@ function renderStory() {
       <p class="story__big" aria-hidden="true">${total}</p>
       <h3 class="display" style="font-size:var(--fs-2xl);margin-top:12px">Today</h3>
       <div class="story__intro-row">
-        <p class="lede">${total} events sit in the archive so far, from courtyard markets to campus festivals. Each new one joins it.</p>
+        <p class="lede">${total} events so far, and counting.</p>
         <a class="btn btn--red" href="#events" data-cursor="open">See the events</a>
       </div>
     </article>`;
 }
 
-/* ---------- numbers ---------- */
-function renderStats() {
-  const venues = uniq(EVENTS.filter(e => !e.venueGeneric).map(e => e.location));
-  const occasions = uniq(EVENTS.map(e => e.occasion));
-  const photos = EVENTS.reduce((s, e) => s + e.images.length, 0);
-  const films = EVENTS.reduce((s, e) => s + (e.videos || []).length, 0);
-  const items = [
-    [EVENTS.length, 'events in the archive'],
-    [venues.length, 'named venues and hosts'],
-    [occasions.length, 'occasions celebrated'],
-    [photos, `photographs and ${films} film${films === 1 ? '' : 's'}`],
-  ];
-  $('#stats').innerHTML = items.map(([n, l]) => `<div class="stat fade"><span class="stat__num" data-count="${n}">${n}</span><span class="stat__label">${esc(l)}</span></div>`).join('');
-}
-function runCounters() {
-  const els = $$('#stats [data-count]');
-  if (reduce) return;
-  els.forEach(el => el.textContent = '0');
-  const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    io.unobserve(e.target);
-    const el = e.target, to = +el.dataset.count, t0 = performance.now(), d = 1200;
-    const step = t => { const p = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(2, -10 * p))); if (p < 1) requestAnimationFrame(step); else el.textContent = to; };
-    requestAnimationFrame(step);
-  }), { threshold: .4 });
-  els.forEach(el => io.observe(el));
-}
-
 /* ---------- the six worlds ---------- */
 function meta(ev) {
   const items = [];
-  if (ev.year) items.push(['Year', ev.year]);
-  if (ev.date) items.push(['Date', ev.date]);
-  items.push(['Venue', ev.location], ['Occasion', ev.occasion], ['Space', ev.space]);
-  if (ev.client) items.push(['Client', ev.client]);
+  if (ev.date || ev.year) items.push([ev.date ? 'Date' : 'Year', ev.date || ev.year]);
+  items.push(['Venue', ev.location], ['Occasion', ev.occasion]);
   return `<dl class="world__meta">${items.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
 }
 const hl = ev => ev.highlights.length ? `<ul class="world__hl" aria-label="Highlights">${ev.highlights.map(h => `<li>${esc(h)}</li>`).join('')}</ul>` : '';
@@ -1960,26 +1901,26 @@ const WORLD = {
       <div class="world__stage">${shot(ev, cover, { sizes: '100vw', cap: false })}<div class="world__over">${head(ev, i, n)}</div></div>
       <div class="world__body">
         <div class="collage">${more.map(im => shot(ev, im, { sizes: '(min-width:900px) 40vw, 100vw' })).join('')}</div>
-        <div class="world__text fade"><p class="world__desc">${esc(ev.description)}</p>${hl(ev)}${cta(ev)}</div>
+        <div class="world__text fade"><p class="world__desc">${esc(ev.summary || ev.description)}</p>${cta(ev)}</div>
       </div></article>`;
   },
   split(ev, i, n) {
     const list = picks(ev, ev.showcase, 6);
     return `<article class="cv world world--split" id="w-${ev.slug}" aria-labelledby="t-${ev.slug}"><div class="world__grid">
-      <div class="world__text">${head(ev, i, n)}<p class="world__desc fade">${esc(ev.description)}</p>${hl(ev)}${cta(ev)}</div>
+      <div class="world__text">${head(ev, i, n)}<p class="world__desc fade">${esc(ev.summary || ev.description)}</p>${cta(ev)}</div>
       <div class="world__pics">${list.map(im => shot(ev, im, { sizes: '(min-width:900px) 46vw, 78vw' })).join('')}</div>
     </div></article>`;
   },
   film(ev, i, n) {
-    const v = (ev.videos || [])[0];
+    const v = (ev.videos || [])[0], fi = FILMS.findIndex(f => f.ev === ev);
     const stills = picks(ev, ev.showcase, 2);
-    const filmBlock = v ? `<div class="film chev" data-cursor="play" data-film="0">
+    const filmBlock = v ? `<div class="film chev"${fi >= 0 ? ` data-cursor="play" data-film="${fi}"` : ''}>
         <img src="${encodeURI(v.poster)}" alt="" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-src="${encodeURI(v.src)}" aria-hidden="true"></video>
         <div class="film__over"><div style="display:grid;gap:14px">${`<p class="world__index"><b>Event ${pad2(i)}</b><span>of ${pad2(n)}</span></p>`}${titleHTML(ev)}</div><span class="film__chip"><i></i>Filmed on the day</span></div>
       </div>` : '';
     return `<article class="cv world world--film" id="w-${ev.slug}" aria-labelledby="t-${ev.slug}">${filmBlock}
       <div class="world__body">${stills.map(im => shot(ev, im, { sizes: '(min-width:900px) 33vw, 100vw' })).join('')}
-        <div class="world__text fade">${meta(ev)}<p class="world__desc">${esc(ev.description)}</p>${hl(ev)}${cta(ev, v ? `<a class="btn" href="#watch" data-film="0" data-cursor="play">Watch the films</a>` : '')}</div>
+        <div class="world__text fade">${meta(ev)}<p class="world__desc">${esc(ev.summary || ev.description)}</p>${cta(ev, v && fi >= 0 ? `<a class="btn" href="#watch" data-film="${fi}" data-cursor="play">Watch the films</a>` : '')}</div>
       </div></article>`;
   },
   chapters(ev, i, n) {
@@ -1994,7 +1935,7 @@ const WORLD = {
       </div>`;
     }).join('');
     return `<article class="cv world world--chapters" id="w-${ev.slug}" aria-labelledby="t-${ev.slug}"><div class="chap__pin"><div class="chap__track" tabindex="0" aria-label="${esc(ev.eventName)}, ${groups.length} chapters">
-      <div class="chap__intro">${head(ev, i, n)}<p class="world__desc fade">${esc(ev.description)}</p></div>
+      <div class="chap__intro">${head(ev, i, n)}<p class="world__desc fade">${esc(ev.summary || ev.description)}</p></div>
       ${chaps}
       <div class="chap__end"><span class="chap__count" aria-hidden="true">${ev.images.length}</span><p class="lede">photographs from apartment communities, in ${groups.length} chapters.</p>${cta(ev).replace('Explore the event', 'See every photograph')}</div>
     </div>
@@ -2009,7 +1950,7 @@ const WORLD = {
       <div class="night__frame">${shot(ev, cover, { sizes: '(min-width:900px) 64vw, 100vw' })}</div>
       ${side ? `<div class="night__side">${shot(ev, side, { sizes: '22vw' })}</div>` : ''}
       <div class="world__body"><div class="world__head">${head(ev, i, n)}</div>
-        <div class="world__text fade"><p class="world__desc">${esc(ev.description)}</p>${hl(ev)}${cta(ev)}</div></div>
+        <div class="world__text fade"><p class="world__desc">${esc(ev.summary || ev.description)}</p>${cta(ev)}</div></div>
     </article>`;
   },
   mosaic(ev, i, n) {
@@ -2018,12 +1959,19 @@ const WORLD = {
     return `<article class="cv world world--mosaic" id="w-${ev.slug}" aria-labelledby="t-${ev.slug}">
       <div class="world__head">${head(ev, i, n)}</div>
       <div class="mosaic">${s(0, 'm1')}${s(1, 'm2')}${s(2, 'm3')}
-        <div class="world__text mtxt fade"><p class="world__desc">${esc(ev.description)}</p>${hl(ev)}${cta(ev)}</div>
+        <div class="world__text mtxt fade"><p class="world__desc">${esc(ev.summary || ev.description)}</p>${cta(ev)}</div>
         ${s(3, 'm4')}${s(4, 'm5')}${s(5, 'm6')}</div>
     </article>`;
   }
 };
-const FEATURED = EVENTS.filter(e => e.featured && e.images.length && WORLD[e.layout]).sort((a, b) => a.featured - b.featured);
+// built-in showcases keep their order; an added event set to position N is slotted in as the Nth
+function featuredList() {
+  const ok = e => e.featured && e.images.length && WORLD[e.layout];
+  const list = EVENTS.filter(e => !e.remote && ok(e)).sort((a, b) => a.featured - b.featured);
+  EVENTS.filter(e => e.remote && ok(e)).reverse().sort((a, b) => a.featured - b.featured).forEach(e => list.splice(Math.min(e.featured - 1, list.length), 0, e));
+  return list;
+}
+let FEATURED = featuredList();
 function renderJump() {
   $('#jump').innerHTML = FEATURED.map(ev => `<a class="chip" href="#w-${ev.slug}">${esc(titleParts(ev)[0])}</a>`).join('') + `<a class="chip chip--all" href="#archive">All ${EVENTS.length} events</a>`;
 }
@@ -2133,10 +2081,11 @@ function interleave(evs) {
   while (left) { left = false; queues.forEach(q => { if (q.length) { out.push(q.shift()); left = true; } }); }
   return out;
 }
+const inGallery = () => withPhotos.filter(e => e.inGallery !== false);
 function renderGalleryFilters() {
-  const spaces = uniq(withPhotos.map(e => e.space));
-  const c = {}; withPhotos.forEach(e => c[e.space] = (c[e.space] || 0) + e.images.length);
-  const total = withPhotos.reduce((s, e) => s + e.images.length, 0);
+  const evs = inGallery(), spaces = uniq(evs.map(e => e.space));
+  const c = {}; evs.forEach(e => c[e.space] = (c[e.space] || 0) + e.images.length);
+  const total = evs.reduce((s, e) => s + e.images.length, 0);
   $('#galleryFilters').innerHTML = `<button class="chip" type="button" data-g="all" aria-pressed="true">All<sup>${total}</sup></button>` +
     spaces.map(s => `<button class="chip" type="button" data-g="${esc(s)}" aria-pressed="false">${esc(s)}<sup>${c[s]}</sup></button>`).join('');
   $('#galleryFilters').addEventListener('click', e => {
@@ -2146,7 +2095,7 @@ function renderGalleryFilters() {
   });
 }
 function setGallery(space) {
-  galleryList = interleave(withPhotos.filter(e => space === 'all' || e.space === space));
+  galleryList = interleave(inGallery().filter(e => space === 'all' || e.space === space));
   galleryShown = 0; $('#masonry').innerHTML = ''; moreGallery();
 }
 function moreGallery() {
@@ -2223,7 +2172,7 @@ function storyCard(a) {
   return `<a class="story-card" href="${artLink(a)}" data-cursor="open">
     <span class="shot chev">${imgTag(ev, im, { sizes: '(min-width:900px) 50vw, 100vw' })}</span>
     <span style="display:grid;gap:14px"><span class="story-card__meta"><b>${esc(a.category)}</b><span>${minutes(a)} min read</span></span>
-    <h3>${esc(a.title)}</h3><p>${esc(a.dek)}</p></span></a>`;
+    <h3>${esc(a.title)}</h3></span></a>`;
 }
 function renderJournal() {
   const cats = uniq(ARTICLES.map(a => a.category));
@@ -2300,7 +2249,7 @@ function renderContact() {
     err('#f-email', !emailOk ? 'Check the email address.' : (!reach ? 'Add an email or a phone number.' : ''));
     err('#f-phone', !phoneOk ? 'Check the phone number.' : '');
     if (!emailOk || !reach) bad = bad || '#f-email'; if (!phoneOk) bad = bad || '#f-phone';
-    if (bad) { status.textContent = 'A few details need fixing before we can send this.'; $(bad).focus(); return; }
+    if (bad) { status.textContent = 'A few details need fixing.'; $(bad).focus(); return; }
     const lines = [`Hi UPS Events, I'd like to plan an event.`, '', `Name: ${d.name}`];
     [['Company or community', d.company], ['Email', d.email], ['Phone', d.phone], ['Event type', d.type], ['Event date', d.date], ['Location', d.location], ['Estimated audience', d.audience]].forEach(([k, v]) => v && lines.push(`${k}: ${v}`));
     if (d.message.trim()) lines.push('', d.message.trim());
@@ -2312,40 +2261,29 @@ function renderContact() {
   $('#copyBrief').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#f-brief').value); $('#copyBrief').textContent = 'Copied'; } catch { $('#f-brief').select(); } });
 }
 
-/* ---------- vendor registration ---------- */
-const VENDOR_FIELDS = [['Business', 'business'], ['Phone', 'phone'], ['Email', 'email'], ['Category', 'category'], ['Based in', 'area'], ['Stall space', 'stall'], ['Power', 'power'], ['Events wanted', 'events'], ['Instagram or website', 'links'], ['FSSAI or GST', 'licence']];
+/* ---------- vendor sign-up: name and number, right under the hero ---------- */
 function renderVendors() {
   const c = SITE.contact, form = $('#vendorForm'), status = $('#vendorStatus'), btn = form.querySelector('[type="submit"]');
-  const err = (id, msg) => { const f = $(id).closest('.field'); f.classList.toggle('has-error', !!msg); const e = f.querySelector('.field__err'); if (e) e.textContent = msg || ''; if (msg) $(id).setAttribute('aria-invalid', 'true'); else $(id).removeAttribute('aria-invalid'); };
+  const err = (id, msg) => { const f = $(id).closest('.field'); f.classList.toggle('has-error', !!msg); f.querySelector('.field__err').textContent = msg || ''; if (msg) $(id).setAttribute('aria-invalid', 'true'); else $(id).removeAttribute('aria-invalid'); };
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const d = Object.fromEntries([...new FormData(form).entries()].map(([k, v]) => [k, v.trim()]));
-    const checks = [
-      ['#v-name', d.name ? '' : 'Add your name.'],
-      ['#v-business', d.business ? '' : 'Add your business or brand name.'],
-      ['#v-phone', !d.phone ? 'Add a phone number.' : (d.phone.replace(/\D/g, '').length < 8 ? 'Check the phone number.' : '')],
-      ['#v-email', d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) ? 'Check the email address.' : ''],
-      ['#v-category', d.category ? '' : 'Choose what you sell.'],
-      ['#v-products', d.products ? '' : 'Tell us what you will sell.']
-    ];
+    const d = { name: $('#v-name').value.trim(), phone: $('#v-phone').value.trim() };
+    const checks = [['#v-name', d.name ? '' : 'Add your name.'], ['#v-phone', !d.phone ? 'Add your number.' : (d.phone.replace(/\D/g, '').length < 8 ? 'Check the number.' : '')]];
     checks.forEach(([id, msg]) => err(id, msg));
     const bad = checks.find(([, msg]) => msg);
-    if (bad) { status.textContent = 'A few details need fixing before we can send this.'; $(bad[0]).focus(); return; }
+    if (bad) { status.textContent = ''; $(bad[0]).focus(); return; }
     if (SITE.vendorSheet) {
-      btn.disabled = true; status.textContent = 'Sending your details…';
+      btn.disabled = true; status.textContent = 'Sending…';
       try {
         await fetch(SITE.vendorSheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ ...d, submitted: new Date().toISOString() }) });
-        form.reset(); status.textContent = 'Thank you. Your vendor details have reached UPS Events and we will call you.';
-      } catch { status.textContent = 'That did not send. Check your connection and try again.'; }
+        form.reset(); status.textContent = "Thanks! We'll call you.";
+      } catch { status.textContent = "That didn't send. Try again."; }
       btn.disabled = false; return;
     }
-    const lines = ['Hi UPS Events, I would like to set up a stall at your events.', '', `Vendor registration: ${d.name}`];
-    VENDOR_FIELDS.forEach(([k, f]) => d[f] && lines.push(`${k}: ${d[f]}`));
-    lines.push('', `Products: ${d.products}`);
-    const text = lines.join('\n');
-    if (c.whatsapp) { window.open(`https://wa.me/${c.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener'); status.textContent = 'WhatsApp opened with your details. Send it there and we will reply.'; }
-    else if (c.email) { location.href = `mailto:${c.email}?subject=${encodeURIComponent('Vendor registration: ' + d.business)}&body=${encodeURIComponent(text)}`; status.textContent = 'Your email app opened with your details. Send it and we will reply.'; }
-    else { $('#vendorBrief').classList.add('is-on'); $('#v-brief').value = text; status.textContent = 'Your details are ready below. Copy them and send them to UPS Events.'; }
+    const text = `Hi UPS Events, I'd like a stall at your events.\n\nName: ${d.name}\nPhone: ${d.phone}`;
+    if (c.whatsapp) { window.open(`https://wa.me/${c.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener'); status.textContent = "WhatsApp opened. Send it and we'll call you."; }
+    else if (c.email) { location.href = `mailto:${c.email}?subject=${encodeURIComponent('Vendor: ' + d.name)}&body=${encodeURIComponent(text)}`; status.textContent = "Your email app opened. Send it and we'll call you."; }
+    else { $('#vendorBrief').classList.add('is-on'); $('#v-brief').value = text; status.textContent = 'Copy this and send it to UPS Events.'; }
   });
   $('#copyVendor').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#v-brief').value); $('#copyVendor').textContent = 'Copied'; } catch { $('#v-brief').select(); } });
 }
@@ -2659,9 +2597,24 @@ function fab() {
    The hero is already painted from the HTML. Everything else is built in small steps,
    handing control back to the browser between each, so the page never freezes while it fills in. */
 const nextTask = () => new Promise(r => (window.scheduler && scheduler.yield) ? scheduler.yield().then(r) : setTimeout(r, 0));
-const STEPS = [
+function addRemote(rows) {
+  const add = (Array.isArray(rows) ? rows : []).map(fromRow).filter(e => e.slug && e.eventName && !BY[e.slug]);
+  if (!add.length) return;
+  EVENTS.unshift(...add);
+  add.forEach(e => { BY[e.slug] = e; });
+  withPhotos.unshift(...add.filter(e => e.images.length));
+  FILMS.unshift(...add.filter(e => e.inFilms).flatMap(ev => ev.videos.map(v => ({ ev, v }))));
+  // "front" events join the hero slideshow right after the photo showing now
+  const front = add.filter(e => e.front && e.images.length).map(ev => ({ ev, im: coverOf(ev) }));
+  if (front.length) {
+    slides.splice(heroIndex + 1, 0, ...front);
+    heroMedia.children[heroIndex].after(...front.map(() => Object.assign(document.createElement('figure'), { className: 'hero__slide' })));
+  }
+  FEATURED = featuredList();
+  if (/^#\/events\//.test(location.hash)) route();
+}
+const STEPS = () => [
   () => { renderStory(); storyScroll(); },
-  () => { renderStats(); runCounters(); },
   renderJump,
   ...FEATURED.map((_, k) => renderWorld(k)),
   () => { strips(); ambientFilms(); },
@@ -2672,7 +2625,8 @@ const STEPS = [
   () => { sectionSpy(); cursor(); fab(); heroParallax(); }
 ];
 async function build() {
-  for (const step of STEPS) { step(); observeReveals(); await nextTask(); }
+  addRemote(await remoteRows);
+  for (const step of STEPS()) { step(); observeReveals(); await nextTask(); }
   smooth();
 }
 route();
