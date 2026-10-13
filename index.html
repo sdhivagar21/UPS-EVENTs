@@ -2295,11 +2295,12 @@ function renderVendors() {
     if (bad) { status.textContent = 'A few details need fixing.'; $(bad[0]).focus(); return; }
     if (SITE.vendorSheet) {
       btn.disabled = true; status.textContent = 'Sending…';
-      try {
-        await fetch(SITE.vendorSheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ ...d, submitted: new Date().toISOString() }) });
-        form.reset(); status.textContent = "Thanks! We'll call you.";
-      } catch { status.textContent = "That didn't send. Try again."; }
-      btn.disabled = false; return;
+      // Read the script's reply so a failed send (e.g. the web app not shared with "Anyone")
+      // falls through to WhatsApp or email below instead of losing the registration.
+      const sent = await fetch(SITE.vendorSheet, { method: 'POST', body: new URLSearchParams({ ...d, submitted: new Date().toISOString() }) })
+        .then(r => r.ok && r.text()).then(t => t && t.trim() === 'ok').catch(() => false);
+      btn.disabled = false;
+      if (sent) { form.reset(); status.textContent = "Thanks! We'll call you."; return; }
     }
     const lines = ["Hi UPS Events, I'd like a stall at your events.", '', `Vendor: ${d.name}`];
     VENDOR_FIELDS.forEach(([k, f]) => d[f] && lines.push(`${k}: ${d[f]}`));
