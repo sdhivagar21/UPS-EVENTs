@@ -12,14 +12,14 @@
 <meta property="og:site_name" content="UPS Events">
 <meta property="og:locale" content="en_IN">
 <meta property="og:url" content="https://upsevents.in/">
-<meta property="og:title" content="UPS Events | We create moments that become memories">
+<meta property="og:title" content="UPS Events | We create memories">
 <meta property="og:description" content="Festival celebrations, family days, markets and brand displays across Chennai's apartment communities, IT parks, malls and colleges.">
 <meta property="og:image" content="https://upsevents.in/images/web/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="UPS Events logo over a night market of red-and-white tents">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="UPS Events | We create moments that become memories">
+<meta name="twitter:title" content="UPS Events | We create memories">
 <meta name="twitter:description" content="Festival celebrations, family days, markets and brand displays across Chennai.">
 <meta name="twitter:image" content="https://upsevents.in/images/web/og-image.jpg">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -839,12 +839,12 @@ ul,ol{padding:0;list-style:none}
   <div class="hero__media" id="heroMedia"><figure class="hero__slide is-active"><img src="images/web/marina-mall/01-h.webp" srcset="images/web/marina-mall/01-h.webp 800w, images/web/marina-mall/01-l.webp 1440w" sizes="100vw" width="1440" height="1080" alt="" fetchpriority="high" decoding="async"></figure></div>
   <div class="hero__shade"></div>
   <div class="hero__content">
-    <h1 class="hero__title display" id="heroTitle"><span class="sr-only">UPS Events: </span><span class="mask"><span>We create</span></span><span class="mask"><span>moments</span></span><span class="mask"><span>that become</span></span><span class="mask"><span>memories.</span></span></h1>
+    <h1 class="hero__title display" id="heroTitle"><span class="sr-only">UPS Events: </span><span class="mask"><span>We create</span></span><span class="mask"><span>memories.</span></span></h1>
     <div class="hero__under" id="heroUnder">
-      <p class="hero__lede">Festivals, family days and markets across Chennai.</p>
-      <a class="hero__explore" href="#events" data-magnetic>Explore our events <b aria-hidden="true">↓</b></a>
+      <p class="hero__lede">Festivals and fairs in Chennai.</p>
+      <a class="hero__explore" href="#events" data-magnetic>See our events <b aria-hidden="true">↓</b></a>
     </div>
-    <div class="hero__now" id="heroNow" aria-live="off"><div class="hero__bars" aria-hidden="true"><span class="is-active"></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span></div><span>Now showing</span><a href="#/events/marina-mall" data-cursor="explore">Marina Mall Activity</a></div>
+    <div class="hero__now" id="heroNow" aria-live="off"><div class="hero__bars" aria-hidden="true"><span class="is-active"></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span></div><a href="#/events/marina-mall" data-cursor="explore">Marina Mall Activity</a></div>
   </div>
 </section>
 
@@ -1854,7 +1854,7 @@ const heroSrcset = s => s.im.full ? srcsetOf(s.ev, s.im) : s.im.src ? '' : `imag
 let heroIndex = 0, heroTimer = null, heroVisible = true;
 function heroCaption() {
   const s = slides[heroIndex];
-  $('#heroNow').innerHTML = `<div class="hero__bars" aria-hidden="true">${slides.map((_, i) => `<span class="${i === heroIndex ? 'is-active' : ''}"></span>`).join('')}</div><span>Now showing</span><a href="${evLink(s.ev)}" data-cursor="explore">${esc(s.ev.eventName)}</a>`;
+  $('#heroNow').innerHTML = `<div class="hero__bars" aria-hidden="true">${slides.map((_, i) => `<span class="${i === heroIndex ? 'is-active' : ''}"></span>`).join('')}</div><a href="${evLink(s.ev)}" data-cursor="explore">${esc(s.ev.eventName)}</a>`;
 }
 function loadSlide(i) {
   const fig = heroMedia.children[i];
