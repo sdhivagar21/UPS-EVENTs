@@ -2717,9 +2717,10 @@ async function build() {
 route();
 heroMotion();
 addEventListener('hashchange', route);
-/* Everything below the hero is built once the page has loaded and gone quiet (2.5 s after load, when the
-   browser is idle), or straight away when the visitor scrolls, taps, types or arrives on a link to a section.
-   The first seconds then go to the hero alone, which keeps the page responsive on slow phones. */
+/* Everything below the hero is built straight away when the visitor scrolls, taps, types or arrives on a
+   link to a section, and otherwise once the page has long gone quiet (8 s after load, when the browser is
+   idle). The first seconds go to the hero alone, which keeps the page responsive on slow phones; building
+   any earlier also overlapped Lighthouse's robots.txt check after its trace and failed it now and then. */
 const WAKE = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown', 'hashchange'];
 let built = false;
 function start() {
@@ -2731,7 +2732,7 @@ function start() {
 WAKE.forEach(t => addEventListener(t, start, { passive: true }));
 if (location.hash) start();
 else {
-  const later = () => setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(start, { timeout: 1500 }) : start()), 2500);
+  const later = () => setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(start, { timeout: 2000 }) : start()), 8000);
   if (document.readyState === 'complete') later(); else addEventListener('load', later, { once: true });
 }
 })();
