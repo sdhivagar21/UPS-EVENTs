@@ -1068,7 +1068,7 @@ const SITE = {
   vendorSheet: "https://script.google.com/macros/s/AKfycbzwgEpX2uB1jQz9RH9iS7cLq6Ohc-pF156kZpf6BzvGT5PcK1hztNKd5ZKIrSmUQO7ZhQ/exec",
   // Events added from the admin page (upsevents.in/admin). Paste your Supabase Project URL and
   // publishable (anon) key here (see README). Left empty, the site shows only the events below.
-  supabase: { url: "", key: "" },
+  supabase: { url: "https://hjmeudhaszhqeecsgsqg.supabase.co", key: "sb_publishable_JUvgm5EkWHtdPpf_Jhwkmg_jFzsgVzB" },
   social: {          // official accounts only; empty ones are hidden
     instagram: "", facebook: "", linkedin: "", youtube: ""
   }
@@ -1839,7 +1839,8 @@ function fromRow(r) {
   const videos = (r.videos || []).filter(v => v && v.path).map((v, i) => ({ src: sbFile(v.path), poster: sbFile(v.poster) || (images[0] ? images[0].small || images[0].full : ''), title: v.title || `Film ${i + 1}`, duration: v.duration || 0 }));
   const auto = videos.length ? 'film' : images.length >= 6 ? 'mosaic' : images.length >= 3 ? 'split' : 'carpet';
   const layout = !r.layout || r.layout === 'auto' || (r.layout === 'film' && !videos.length) ? auto : r.layout;
-  return { slug: r.slug, eventName: r.name, year: r.year || null, date: r.date || null, location: r.venue, category: r.category || 'Festivals', space: r.space || r.venue,
+  const date = r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+  return { slug: r.slug, eventName: r.name, year: r.year || (r.date ? +r.date.slice(0, 4) : null), date, location: r.venue, category: r.category || 'Festivals', space: r.space || r.venue,
     occasion: r.occasion || r.category, client: r.client || undefined, featured: r.showcase || null, layout, cover: r.cover || null, summary: r.summary || '',
     description: r.description || r.summary || '', highlights: r.highlights || [], participants: [], sponsors: [], relatedArticles: [], videos, images,
     remote: true, front: !!r.on_front, inGallery: r.in_gallery !== false, inFilms: r.in_films !== false };

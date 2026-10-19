@@ -1,5 +1,21 @@
 ﻿# UPS Events
 
+## Adding events from the admin page
+
+Go to **upsevents.in/admin**, sign in, and click **+ New event**. Fill in the details, add photos (they're resized in the browser) and films, then click **Save**. With **Show on the website** ticked, the event appears on the site straight away, next to the events built into `index.html`.
+
+Events, photos and films are stored in a Supabase project. Setting one up from scratch:
+
+1. Create a project at [supabase.com](https://supabase.com) (region: South Asia, Mumbai).
+2. Open **SQL Editor**, paste [`admin/setup.sql`](admin/setup.sql) and click **Run**. This creates the `events` and `admins` tables, the public `media` bucket and the access rules.
+3. Under **Authentication → Sign In / Providers**, turn off **Allow new users to sign up**.
+4. Under **Authentication → Users**, click **Add user** and create the admin's email and password. Then add the same email as a row in the `admins` table (**Table Editor → admins**). Only emails in that table can change anything.
+5. Copy the **Project URL** and the **publishable** (anon) key from **Project Settings → API Keys**. Paste them into `SITE.supabase` in `index.html` and `CONFIG` in `admin/index.html`. Never use the secret (`service_role`) key in either file.
+
+To add another admin later, repeat step 4. To remove one, delete their row from `admins`.
+
+The free plan pauses a project after about a week with no activity. Visits to the site normally keep it awake. If it does pause, the site still works and shows only the built-in events until you restore the project from the Supabase dashboard.
+
 ## Vendor registrations in a Google Sheet
 
 The **Vendors** section (`#vendors`) has its own form, kept separate from the client enquiry form. To collect every vendor submission as a row in a Google Sheet:

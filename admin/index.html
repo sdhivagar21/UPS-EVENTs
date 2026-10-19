@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin | UPS Events</title>
+<meta name="theme-color" content="#05061A">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:"Archivo";src:url(../fonts/archivo.woff2) format("woff2");font-weight:300 900;font-stretch:100% 125%;font-display:swap}
+:root{
+  --ink:#05061A; --night:#0C0F33; --navy:#171F8F; --red:#FF1A1A; --paper:#F4F5FA; --mist:#A3A6C6;
+  --line:rgba(244,245,250,.16); --ok:#3DDC97; --pad:clamp(16px,4vw,40px);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:"Archivo",Arial,sans-serif;font-size:1rem;line-height:1.5;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+a{color:inherit}
+h1,h2{margin:0;font-stretch:110%;line-height:1.15}
+h1{font-size:clamp(1.6rem,1.2rem + 1.6vw,2.2rem)}
+h2{font-size:1.15rem}
+.muted{color:var(--mist)}
+small{color:var(--mist);font-size:.85rem}
+main{max-width:980px;margin:0 auto;padding:24px var(--pad) 96px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px var(--pad);background:rgba(5,6,26,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-stretch:115%;text-transform:uppercase;letter-spacing:.02em;text-decoration:none}
+.brand span{color:var(--red);margin-left:.35em}
+.me{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.85rem;color:var(--mist)}
+.me span{margin-right:4px;overflow-wrap:anywhere}
+
+/* buttons and fields */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:44px;padding:.6em 1.2em;border:1px solid var(--line);background:transparent;color:var(--paper);font:inherit;font-weight:600;font-size:.95rem;text-decoration:none;cursor:pointer;border-radius:2px}
+.btn:hover{border-color:var(--paper)}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn--red{background:#D7000A;border-color:#D7000A;color:#fff}
+.btn--red:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.btn--sm{min-height:36px;padding:.35em .9em;font-size:.85rem}
+.btn--bad{color:#ff8a8a;border-color:rgba(255,138,138,.4)}
+.btn--bad:hover{border-color:#ff8a8a}
+label{display:grid;gap:6px;font-weight:600;font-size:.9rem}
+label small{font-weight:400}
+input,select,textarea{width:100%;min-height:46px;padding:10px 12px;background:var(--night);border:1px solid var(--line);border-radius:2px;color:var(--paper);font:inherit;font-size:16px;font-weight:400}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,summary:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;accent-color:var(--red);flex:none;margin:0}
+.check{display:flex;align-items:flex-start;gap:10px;font-weight:400}
+.check b{font-weight:600}
+.msg{min-height:1.5em;margin:0;color:#ff8a8a;font-size:.9rem}
+
+/* cards */
+.card{display:grid;gap:18px;padding:clamp(18px,3vw,28px);background:var(--night);border:1px solid var(--line)}
+.card input,.card select,.card textarea{background:var(--ink)}
+.narrow{max-width:420px;margin:8vh auto 0}
+
+/* event list */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.intro{margin:0 0 24px;max-width:60ch}
+.events{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ev{display:grid;grid-template-columns:96px minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:10px;background:var(--night);border:1px solid var(--line)}
+.ev__pic{width:96px;aspect-ratio:4/3;background:var(--ink);overflow:hidden}
+.ev__pic img{width:100%;height:100%;object-fit:cover;display:block}
+.ev__text{display:grid;gap:2px;min-width:0}
+.ev__text b{overflow-wrap:anywhere}
+.ev__side{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border:1px solid var(--line);color:var(--mist);white-space:nowrap}
+.pill--on{color:var(--ok);border-color:rgba(61,220,151,.45)}
+.empty{padding:32px 16px;text-align:center;color:var(--mist);border:1px dashed var(--line)}
+@media (max-width:620px){
+  .ev{grid-template-columns:72px minmax(0,1fr)}
+  .ev__pic{width:72px}
+  .ev__side{grid-column:1/-1;justify-content:flex-start}
+}
+
+/* editor */
+.form{display:grid;gap:22px}
+.form>.bar{position:sticky;top:61px;z-index:4;padding:10px 0;background:var(--ink)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+/* on phones the top bar wraps, so it scrolls away and the Save bar sticks to the very top instead */
+@media (max-width:620px){.grid2{grid-template-columns:1fr}.top{position:static}.me span{display:none}.form>.bar{top:0}}
+.hint{margin:-2px 0 0;font-size:.85rem;color:var(--mist);font-weight:400}
+.url{font-family:ui-monospace,Consolas,monospace;font-size:.85rem;color:var(--mist);overflow-wrap:anywhere}
+details{border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:700;list-style-position:outside}
+details[open] summary{margin-bottom:18px}
+.drop{display:grid;place-items:center;gap:6px;padding:26px 16px;border:1px dashed rgba(244,245,250,.35);text-align:center;cursor:pointer}
+.drop.is-over{border-color:var(--red);background:rgba(255,26,26,.06)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drop b{font-size:1rem}
+
+.photos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.ph{display:grid;gap:8px;align-content:start}
+.ph__pic{position:relative;display:block;aspect-ratio:4/3;background:var(--ink);overflow:hidden;border:1px solid var(--line)}
+.ph__pic img{width:100%;height:100%;object-fit:cover;display:block}
+.ph.is-cover .ph__pic{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.ph__row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ph__row .check{font-size:.85rem;align-items:center}
+.ph__btns{display:flex;gap:4px}
+.ph__btns button{min-width:36px;min-height:36px;padding:0 8px;background:transparent;border:1px solid var(--line);color:var(--paper);font:inherit;font-size:.85rem;cursor:pointer}
+.ph__btns button:hover{border-color:var(--paper)}
+.ph input[type=text]{min-height:40px;padding:8px 10px;font-size:15px}
+.load{position:absolute;inset:auto 10px 10px;display:grid;gap:6px;font-size:.8rem;color:var(--paper);text-shadow:0 1px 3px #000}
+.load i{display:block;height:4px;background:rgba(244,245,250,.25)}
+.load i b{display:block;height:100%;width:0;background:var(--red);transition:width .2s}
+
+.vids{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.vid{display:grid;grid-template-columns:120px minmax(0,1fr) auto;align-items:center;gap:12px}
+.vid .ph__pic{aspect-ratio:16/9}
+@media (max-width:620px){.vid{grid-template-columns:96px minmax(0,1fr)}.vid .ph__btns{grid-column:2}}
+
+.where{display:grid;gap:14px}
+.danger{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:22px}
+
+/* toast and dialog */
+.toast{position:fixed;left:50%;bottom:24px;z-index:20;transform:translate(-50%,20px);opacity:0;max-width:min(92vw,520px);padding:12px 18px;background:var(--paper);color:var(--ink);font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .25s,transform .25s;pointer-events:none}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+.toast.is-bad{background:#ffb3b3}
+dialog{width:min(92vw,420px);padding:0;border:1px solid var(--line);background:var(--night);color:var(--paper)}
+dialog::backdrop{background:rgba(5,6,26,.75)}
+dialog .card{border:0}
+.row{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../">UPS Events<span>Admin</span></a>
+  <div class="me" id="me" hidden><span id="meEmail"></span><button class="btn btn--sm" type="button" id="pwBtn">Change password</button><button class="btn btn--sm" type="button" id="outBtn">Sign out</button></div>
+</header>
+
+<main>
+  <section id="setup" hidden>
+    <div class="card narrow">
+      <h1>Not connected yet</h1>
+      <p class="muted">This page needs the Supabase project URL and publishable key. Paste them into <code>CONFIG</code> near the bottom of <code>admin/index.html</code> (the same values as <code>SITE.supabase</code> in the main <code>index.html</code>).</p>
+    </div>
+  </section>
+
+  <section id="login" hidden>
+    <form class="card narrow" id="loginForm">
+      <h1>Sign in</h1>
+      <label>Email<input type="email" name="email" autocomplete="username" required></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn btn--red" type="submit">Sign in</button>
+      <p class="msg" role="status"></p>
+    </form>
+  </section>
+
+  <section id="list" hidden>
+    <div class="bar"><h1>Events</h1><button class="btn btn--red" type="button" id="newBtn">+ New event</button></div>
+    <p class="intro muted">Events you add here appear on upsevents.in alongside the ones built into the site. Changes show up as soon as you save.</p>
+    <ul class="events" id="events"></ul>
+  </section>
+
+  <section id="editor" hidden>
+    <form class="form" id="form" novalidate>
+      <div class="bar">
+        <button class="btn" type="button" id="backBtn">← Back</button>
+        <h1 id="edTitle">New event</h1>
+        <button class="btn btn--red" type="submit" id="saveBtn">Save</button>
+      </div>
+
+      <div class="card">
+        <h2>About the event</h2>
+        <label>Event name
+          <input name="name" required maxlength="120" placeholder="Pongal Celebration at Alliance Orchid Spring">
+          <small>Write it as "what at where". The site shows the first part big and the "at …" part underneath.</small>
+        </label>
+        <div class="grid2">
+          <label>Venue<input name="venue" required maxlength="80" placeholder="Alliance Orchid Spring"></label>
+          <label>Occasion<input name="occasion" list="occasions" maxlength="60" placeholder="Pongal"></label>
+          <label>Type of event
+            <select name="category"><option>Festivals</option><option>Family days</option><option>Community fairs</option><option>Expos &amp; activations</option></select>
+          </label>
+          <label>Kind of place
+            <select name="space"><option>Apartment communities</option><option>IT parks &amp; offices</option><option>Malls</option><option>Colleges</option></select>
+          </label>
+          <label>Date <small>(optional)</small><input type="date" name="date"></label>
+          <label>Or just the year <small>(if you don't know the date)</small><input type="number" name="year" min="2000" max="2100" inputmode="numeric" placeholder="2026"></label>
+        </div>
+        <label>Client <small>(optional, e.g. a company that hired you)</small><input name="client" maxlength="80"></label>
+        <label>One-line summary
+          <input name="summary" maxlength="140" placeholder="Karagattam dancers, folk horses and a dance circle on the open ground.">
+          <small>Shown under the event name. Keep it to one short sentence.</small>
+        </label>
+        <label>Description<textarea name="description" rows="5" placeholder="What happened, where, and what made it special."></textarea></label>
+        <label>Highlights <small>(one per line)</small><textarea name="highlights" rows="4" placeholder="Karagattam dancers&#10;Folk horse dancers&#10;Drummers"></textarea></label>
+      </div>
+
+      <div class="card">
+        <h2>Photos</h2>
+        <label class="drop" id="photoDrop">
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple>
+          <b>Add photos</b><small>Tap to choose, or drop them here. They're resized automatically.</small>
+        </label>
+        <p class="hint" id="photoHint">Pick a cover with the "Cover" button. Use the arrows to change the order.</p>
+        <ul class="photos" id="photos"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Films <small>(optional)</small></h2>
+        <label class="drop" id="videoDrop">
+          <input type="file" id="videoInput" accept="video/mp4,video/webm,video/quicktime" multiple>
+          <b>Add a film</b><small>MP4 works best. Up to 50 MB each.</small>
+        </label>
+        <ul class="vids" id="videos"></ul>
+      </div>
+
+      <div class="card where">
+        <h2>Where it shows</h2>
+        <label class="check"><input type="checkbox" name="published"><span><b>Show on the website</b><br><small>Untick to keep it as a draft that only you can see here.</small></span></label>
+        <label class="check"><input type="checkbox" name="on_front"><span><b>Add to the home page slideshow</b><br><small>Uses the cover photo.</small></span></label>
+        <label class="check"><input type="checkbox" name="in_gallery"><span><b>Show its photos in the Gallery</b></span></label>
+        <label class="check"><input type="checkbox" name="in_films"><span><b>Show its films in the Films section</b></span></label>
+        <details id="more">
+          <summary>More settings</summary>
+          <div class="grid2">
+            <label>Big showcase on the home page
+              <select name="showcase"><option value="">No, just list it</option><option value="1">Yes, 1st</option><option value="2">Yes, 2nd</option><option value="3">Yes, 3rd</option><option value="4">Yes, 4th</option><option value="5">Yes, 5th</option><option value="6">Yes, 6th</option></select>
+            </label>
+            <label>Showcase style
+              <select name="layout"><option value="auto">Automatic</option><option value="carpet">Big cover photo</option><option value="split">Story beside photos</option><option value="mosaic">Photo mosaic (6+ photos)</option><option value="chapters">Chapters</option><option value="night">Night</option><option value="film">Film (needs a film)</option></select>
+            </label>
+          </div>
+          <label style="margin-top:18px">Web address
+            <input name="slug" maxlength="80" pattern="[a-z0-9]+(-[a-z0-9]+)*" autocapitalize="off" spellcheck="false">
+            <small class="url" id="slugUrl"></small>
+          </label>
+        </details>
+      </div>
+
+      <div class="danger" id="danger">
+        <small>Deleting removes the event and its photos and films from the website.</small>
+        <button class="btn btn--bad" type="button" id="delBtn">Delete event</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<dialog id="pwDialog">
+  <form class="card" id="pwForm">
+    <h2>Change password</h2>
+    <label>New password<input type="password" name="pw" minlength="8" autocomplete="new-password" required></label>
+    <label>Type it again<input type="password" name="pw2" minlength="8" autocomplete="new-password" required></label>
+    <p class="msg" role="status"></p>
+    <div class="row"><button class="btn" type="button" id="pwCancel">Cancel</button><button class="btn btn--red" type="submit">Save password</button></div>
+  </form>
+</dialog>
+
+<datalist id="occasions"><option>Pongal</option><option>Diwali</option><option>Onam</option><option>Christmas</option><option>New Year</option><option>Holi</option><option>Navratri</option><option>Ganesh Chaturthi</option><option>Independence Day</option><option>Republic Day</option><option>Valentine's Day</option><option>Women's Day</option><option>Family Day</option><option>Summer Fun</option><option>Auto expo</option><option>Mall activation</option><option>Association festival</option><option>Community festivals</option></datalist>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script>
+(async () => {
+'use strict';
+/* Same values as SITE.supabase in ../index.html. The publishable key is safe to show here:
+   the database only lets admins (emails in the "admins" table) change anything. */
+const CONFIG = {
+  url: "https://hjmeudhaszhqeecsgsqg.supabase.co",
+  key: "sb_publishable_JUvgm5EkWHtdPpf_Jhwkmg_jFzsgVzB"
+};
+
+const BUCKET = 'media', MAX_VIDEO = 50 * 1024 * 1024, FULL = 1600, SMALL = 720;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const slugify = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80).replace(/-+$/, '');
+const newId = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()).replace(/-/g, '').slice(0, 8);
+const fmtDate = r => r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.year ? String(r.year) : '';
+const view = id => { ['setup', 'login', 'list', 'editor'].forEach(v => { $('#' + v).hidden = v !== id; }); scrollTo(0, 0); };
+let toastTimer;
+function toast(text, bad = false) {
+  const t = $('#toast'); t.textContent = text; t.className = 'toast is-on' + (bad ? ' is-bad' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = 'toast'; }, bad ? 7000 : 4000);
+}
+
+const SB_URL = CONFIG.url.replace(/\/+$/, '');
+if (!SB_URL || !CONFIG.key || !window.supabase) { view('setup'); return; }
+const sb = supabase.createClient(SB_URL, CONFIG.key);
+const fileUrl = p => p ? `${SB_URL}/storage/v1/object/public/${BUCKET}/${p}` : '';
+const removeFiles = paths => paths.length ? sb.storage.from(BUCKET).remove(paths) : Promise.resolve();
+
+// slugs of the events built into the site: a database event with the same slug would be hidden
+const builtIn = fetch('../', { cache: 'no-store' }).then(r => r.text())
+  .then(t => new Set([...t.matchAll(/^\s+slug: "([a-z0-9-]+)",\r?$/gm)].map(m => m[1]))).catch(() => new Set());
+
+/* ---------- sign in ---------- */
+async function enter(user) {
+  const { data: ok, error } = await sb.rpc('is_admin');
+  if (error || !ok) {
+    await sb.auth.signOut();
+    view('login');
+    $('#loginForm .msg').textContent = error ? `Couldn't check your account: ${error.message}` : `${user.email} isn't an admin account.`;
+    return;
+  }
+  $('#meEmail').textContent = user.email;
+  $('#me').hidden = false;
+  view('list');
+  await loadList();
+}
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, msg = $('.msg', f), btn = $('button', f);
+  btn.disabled = true; msg.textContent = '';
+  const { data, error } = await sb.auth.signInWithPassword({ email: f.email.value.trim(), password: f.password.value });
+  btn.disabled = false;
+  if (error) { msg.textContent = /invalid login/i.test(error.message) ? 'Wrong email or password.' : error.message; return; }
+  f.reset();
+  await enter(data.user);
+});
+$('#outBtn').addEventListener('click', async () => {
+  if (!$('#editor').hidden && !leaveEditor()) return;
+  await sb.auth.signOut();
+  location.reload();
+});
+
+const pw = $('#pwDialog'), pwForm = $('#pwForm');
+$('#pwBtn').addEventListener('click', () => { pwForm.reset(); $('.msg', pwForm).textContent = ''; pw.showModal(); });
+$('#pwCancel').addEventListener('click', () => pw.close());
+pwForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = $('.msg', pwForm), a = pwForm.pw.value, b = pwForm.pw2.value;
+  if (a.length < 8) { msg.textContent = 'Use at least 8 characters.'; return; }
+  if (a !== b) { msg.textContent = "The two passwords don't match."; return; }
+  const { error } = await sb.auth.updateUser({ password: a });
+  if (error) { msg.textContent = error.message; return; }
+  pw.close();
+  toast('Password changed.');
+});
+
+/* ---------- event list ---------- */
+let rows = [];
+async function loadList() {
+  const ul = $('#events');
+  ul.innerHTML = '<li class="empty">Loading…</li>';
+  const { data, error } = await sb.from('events').select('*').order('created_at', { ascending: false });
+  if (error) { ul.innerHTML = `<li class="empty">Couldn't load events: ${esc(error.message)}</li>`; return; }
+  rows = data;
+  ul.innerHTML = rows.length ? rows.map(r => {
+    const photos = r.photos || [], cover = photos.find(p => p.id === r.cover) || photos[0], films = (r.videos || []).length;
+    return `<li class="ev">
+      <span class="ev__pic">${cover ? `<img src="${esc(fileUrl(cover.small || cover.full))}" alt="" loading="lazy">` : ''}</span>
+      <span class="ev__text"><b>${esc(r.name)}</b><small>${esc([r.venue, fmtDate(r)].filter(Boolean).join(' · '))}</small>
+        <small>${photos.length} photo${photos.length === 1 ? '' : 's'}${films ? ` · ${films} film${films === 1 ? '' : 's'}` : ''}</small></span>
+      <span class="ev__side"><span class="pill${r.published ? ' pill--on' : ''}">${r.published ? 'On the site' : 'Draft'}</span>
+        ${r.published && photos.length ? `<a class="btn btn--sm" href="../#/events/${esc(r.slug)}" target="_blank" rel="noopener">View</a>` : ''}
+        <button class="btn btn--sm" type="button" data-edit="${esc(r.id)}">Edit</button></span>
+    </li>`;
+  }).join('') : '<li class="empty">No events yet. Click <b>+ New event</b> to add your first one.</li>';
+}
+$('#events').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openEditor(rows.find(r => r.id === b.dataset.edit)); });
+$('#newBtn').addEventListener('click', () => openEditor(null));
+
+/* ---------- editor ----------
+   Photos and films upload as soon as they're picked, into media/events/<event id>/.
+   `uploaded` holds this visit's files (deleted again if you leave without saving);
+   `removed` holds saved files you took out (deleted once the save goes through). */
+const form = $('#form'), F = n => form.elements.namedItem(n);
+let cur = null, dirty = false, slugTouched = false, uploaded = [], removed = [], previews = [];
+const queue = []; let running = false;
+
+function openEditor(row) {
+  cur = row ? structuredClone(row) : { id: crypto.randomUUID(), photos: [], videos: [], published: true, in_gallery: true, in_films: true, layout: 'auto', category: 'Festivals', space: 'Apartment communities' };
+  cur.isNew = !row;
+  cur.photos = cur.photos || []; cur.videos = (cur.videos || []).map(v => ({ id: v.id || newId(), ...v }));
+  form.reset();
+  for (const k of ['name', 'venue', 'occasion', 'category', 'space', 'date', 'year', 'client', 'summary', 'description', 'slug', 'layout']) F(k).value = cur[k] ?? '';
+  F('layout').value = cur.layout || 'auto';
+  F('showcase').value = cur.showcase ? String(cur.showcase) : '';
+  F('highlights').value = (cur.highlights || []).join('\n');
+  for (const k of ['published', 'on_front', 'in_gallery', 'in_films']) F(k).checked = !!cur[k];
+  slugTouched = !!row;
+  uploaded = []; removed = []; dirty = false;
+  $('#edTitle').textContent = row ? 'Edit event' : 'New event';
+  $('#danger').hidden = !row;
+  $('#more').open = false;
+  showSlug(); renderPhotos(); renderVideos(); setBusy();
+  view('editor');
+}
+function leaveEditor() {
+  if (running) { toast('Wait for the uploads to finish first.', true); return false; }
+  if (dirty && !confirm('Leave without saving? Your changes will be lost.')) return false;
+  removeFiles(uploaded);
+  previews.forEach(u => URL.revokeObjectURL(u)); previews = [];
+  uploaded = []; removed = []; dirty = false; cur = null;
+  return true;
+}
+$('#backBtn').addEventListener('click', () => { if (leaveEditor()) view('list'); });
+addEventListener('beforeunload', e => { if (dirty || running) { e.preventDefault(); e.returnValue = ''; } });
+form.addEventListener('input', e => {
+  dirty = true;
+  if (e.target === F('slug')) slugTouched = true;
+  if (e.target === F('name') && !slugTouched) F('slug').value = slugify(F('name').value);
+  if (e.target === F('name') || e.target === F('slug')) showSlug();
+  if (e.target === F('date') && F('date').value) F('year').value = F('date').value.slice(0, 4);
+});
+function showSlug() { const s = slugify(F('slug').value || F('name').value); $('#slugUrl').textContent = s ? `upsevents.in/#/events/${s}` : ''; }
+function setBusy() {
+  const b = $('#saveBtn');
+  b.disabled = running;
+  b.textContent = running ? 'Uploading…' : 'Save';
+}
+
+/* photos */
+const coverId = () => { const done = cur.photos.filter(p => !p.pending); return (done.find(p => p.id === cur.cover) || done[0] || {}).id || null; };
+const loadBar = (label) => `<span class="load"><span>${label}</span><i><b></b></i></span>`;
+function photoHTML(p) {
+  const isCover = !p.pending && p.id === coverId(), src = p.preview || fileUrl(p.small || p.full);
+  return `<li class="ph${isCover ? ' is-cover' : ''}" data-id="${esc(p.id)}">
+    <span class="ph__pic">${src ? `<img src="${esc(src)}" alt="">` : ''}${p.pending ? loadBar('Uploading…') : ''}</span>
+    <span class="ph__row">
+      <label class="check"><input type="radio" name="coverPick" value="${esc(p.id)}"${isCover ? ' checked' : ''}${p.pending ? ' disabled' : ''}> Cover</label>
+      <span class="ph__btns"><button type="button" data-move="-1" aria-label="Move earlier">←</button><button type="button" data-move="1" aria-label="Move later">→</button>${p.pending ? '' : '<button type="button" data-del aria-label="Remove photo">✕</button>'}</span>
+    </span>
+    <input type="text" data-alt maxlength="120" value="${esc(p.alt || '')}" placeholder="Caption: what's in this photo?" aria-label="Caption">
+  </li>`;
+}
+function renderPhotos() {
+  $('#photos').innerHTML = cur.photos.map(photoHTML).join('');
+  $('#photoHint').hidden = cur.photos.length < 2;
+}
+const refreshPhoto = p => { const li = $(`#photos [data-id="${p.id}"]`); if (li) li.outerHTML = photoHTML(p); };
+const setProgress = (id, f) => { const b = $(`[data-id="${id}"] .load b`); if (b) b.style.width = Math.round(f * 100) + '%'; };
+
+$('#photos').addEventListener('click', e => {
+  const li = e.target.closest('.ph'); if (!li) return;
+  const i = cur.photos.findIndex(p => p.id === li.dataset.id), p = cur.photos[i];
+  const mv = e.target.closest('[data-move]');
+  if (mv) {
+    const j = i + +mv.dataset.move;
+    if (j < 0 || j >= cur.photos.length) return;
+    [cur.photos[i], cur.photos[j]] = [cur.photos[j], cur.photos[i]];
+    dirty = true; renderPhotos();
+    $(`#photos [data-id="${p.id}"] [data-move="${mv.dataset.move}"]`)?.focus();
+  } else if (e.target.closest('[data-del]')) {
+    dropFiles([p.full, p.small]);
+    cur.photos.splice(i, 1);
+    dirty = true; renderPhotos();
+  }
+});
+$('#photos').addEventListener('change', e => {
+  if (e.target.name === 'coverPick') { cur.cover = e.target.value; dirty = true; renderPhotos(); }
+});
+$('#photos').addEventListener('input', e => {
+  if (!e.target.matches('[data-alt]')) return;
+  const p = cur.photos.find(x => x.id === e.target.closest('.ph').dataset.id);
+  if (p) p.alt = e.target.value;
+});
+// files uploaded during this visit can go straight away; saved ones wait for the save
+function dropFiles(paths) {
+  const now = [];
+  for (const path of paths.filter(Boolean)) {
+    if (uploaded.includes(path)) { uploaded = uploaded.filter(x => x !== path); now.push(path); }
+    else removed.push(path);
+  }
+  removeFiles(now);
+}
+
+function decode(file) {
+  return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(() => new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { URL.revokeObjectURL(url); res(im); };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("this browser can't open that photo. Try a JPEG.")); };
+    im.src = url;
+  }));
+}
+function canvasOf(src, w, h) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.drawImage(src, 0, 0, w, h);
+  return c;
+}
+// WebP where the browser can make it (Chrome, Edge, Firefox), JPEG elsewhere
+const blobOf = (c, q = 0.82) => new Promise(r => c.toBlob(r, 'image/webp', q))
+  .then(b => b && b.type === 'image/webp' ? b : new Promise(r => c.toBlob(r, 'image/jpeg', 0.86)));
+const extOf = b => b.type === 'image/webp' ? 'webp' : 'jpg';
+// the site paints this colour while a photo loads: the photo's average, darkened
+function avgColour(src) {
+  const d = canvasOf(src, 12, 12).getContext('2d').getImageData(0, 0, 12, 12).data;
+  const s = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) { s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; }
+  return '#' + s.map(v => Math.round(v / (d.length / 4) * 0.55).toString(16).padStart(2, '0')).join('');
+}
+
+async function put(path, blob, onProgress, type) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw new Error('you were signed out. Sign in again.');
+  return new Promise((res, rej) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', `${SB_URL}/storage/v1/object/${BUCKET}/${path}`);
+    x.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
+    x.setRequestHeader('apikey', CONFIG.key);
+    x.setRequestHeader('Content-Type', type || blob.type || 'application/octet-stream');
+    // an hour, so a deleted photo also drops out of Supabase's CDN cache within the hour
+    x.setRequestHeader('Cache-Control', 'max-age=3600');
+    x.setRequestHeader('x-upsert', 'false');
+    if (onProgress) x.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    x.onload = () => {
+      if (x.status >= 200 && x.status < 300) return res(path);
+      let m = ''; try { m = JSON.parse(x.responseText).message; } catch {}
+      rej(new Error(m || `upload failed (${x.status})`));
+    };
+    x.onerror = () => rej(new Error('network error. Check the connection and try again.'));
+    x.send(blob);
+  });
+}
+
+async function runQueue() {
+  if (running) return;
+  running = true; setBusy();
+  while (queue.length) await queue.shift()();
+  running = false; setBusy();
+}
+function addPhotos(files) {
+  const ev = cur;
+  for (const file of files) {
+    if (!/^image\//.test(file.type) && !/\.(jpe?g|png|webp|heic|heif)$/i.test(file.name)) { toast(`${file.name} isn't a photo.`, true); continue; }
+    const p = { id: newId(), alt: '', pending: true };
+    cur.photos.push(p);
+    $('#photos').insertAdjacentHTML('beforeend', photoHTML(p));
+    queue.push(() => uploadPhoto(ev, p, file));
+  }
+  dirty = true; $('#photoHint').hidden = cur.photos.length < 2;
+  runQueue();
+}
+async function uploadPhoto(ev, p, file) {
+  const mine = [];
+  try {
+    const src = await decode(file), W = src.naturalWidth || src.width, H = src.naturalHeight || src.height;
+    const k = Math.min(1, FULL / Math.max(W, H)), w = Math.round(W * k), h = Math.round(H * k);
+    const bigC = canvasOf(src, w, h);
+    if (src.close) src.close();
+    const smallC = w > SMALL ? canvasOf(bigC, SMALL, Math.round(h * SMALL / w)) : null;
+    const big = await blobOf(bigC), small = smallC ? await blobOf(smallC, 0.8) : null;
+    Object.assign(p, { w, h, c: avgColour(smallC || bigC), preview: URL.createObjectURL(small || big) });
+    previews.push(p.preview); refreshPhoto(p);
+    const base = `events/${ev.id}/${p.id}`, total = big.size + (small ? small.size : 0);
+    p.full = await put(`${base}-l.${extOf(big)}`, big, f => setProgress(p.id, f * big.size / total)); mine.push(p.full);
+    if (small) { p.small = await put(`${base}-s.${extOf(small)}`, small, f => setProgress(p.id, (big.size + f * small.size) / total)); mine.push(p.small); }
+    uploaded.push(...mine);
+    delete p.pending;
+    if (!ev.photos.includes(p)) dropFiles(mine);  // removed while uploading
+    else refreshPhoto(p);
+  } catch (err) {
+    removeFiles(mine);
+    if (ev.photos.includes(p)) ev.photos.splice(ev.photos.indexOf(p), 1);
+    $(`#photos [data-id="${p.id}"]`)?.remove();
+    toast(`Couldn't add ${file.name}: ${err.message}`, true);
+  }
+}
+
+/* films */
+function videoHTML(v) {
+  const poster = v.preview || fileUrl(v.poster), mins = v.duration ? `${Math.floor(v.duration / 60)}:${String(Math.round(v.duration % 60)).padStart(2, '0')}` : '';
+  return `<li class="vid" data-id="${esc(v.id)}">
+    <span class="ph__pic">${poster ? `<img src="${esc(poster)}" alt="">` : ''}${v.pending ? loadBar('Uploading…') : ''}</span>
+    <label>Film title ${mins ? `<small>${mins}</small>` : ''}<input type="text" data-title maxlength="80" value="${esc(v.title || '')}" placeholder="e.g. The procession"></label>
+    <span class="ph__btns">${v.pending ? '' : '<button type="button" data-vdel aria-label="Remove film">✕</button>'}</span>
+  </li>`;
+}
+const renderVideos = () => { $('#videos').innerHTML = cur.videos.map(videoHTML).join(''); };
+const refreshVideo = v => { const li = $(`#videos [data-id="${v.id}"]`); if (li) li.outerHTML = videoHTML(v); };
+$('#videos').addEventListener('click', e => {
+  if (!e.target.closest('[data-vdel]')) return;
+  const i = cur.videos.findIndex(v => v.id === e.target.closest('.vid').dataset.id);
+  dropFiles([cur.videos[i].path, cur.videos[i].poster]);
+  cur.videos.splice(i, 1);
+  dirty = true; renderVideos();
+});
+$('#videos').addEventListener('input', e => {
+  if (!e.target.matches('[data-title]')) return;
+  const v = cur.videos.find(x => x.id === e.target.closest('.vid').dataset.id);
+  if (v) v.title = e.target.value;
+});
+// length and a poster frame, read in the browser; a film the browser can't play still uploads
+function videoInfo(file) {
+  return new Promise(res => {
+    const url = URL.createObjectURL(file), v = document.createElement('video'); let done = false;
+    const end = val => { if (done) return; done = true; clearTimeout(t); URL.revokeObjectURL(url); res(val); };
+    const t = setTimeout(() => end({ duration: v.duration || 0 }), 12000);
+    v.muted = true; v.playsInline = true; v.preload = 'auto';
+    v.onloadedmetadata = () => { v.currentTime = Math.min(1, (v.duration || 2) / 2); };
+    v.onseeked = async () => {
+      try {
+        const k = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight));
+        end({ duration: v.duration, poster: v.videoWidth ? await blobOf(canvasOf(v, Math.round(v.videoWidth * k), Math.round(v.videoHeight * k))) : null });
+      } catch { end({ duration: v.duration }); }
+    };
+    v.onerror = () => end({ duration: 0 });
+    v.src = url;
+  });
+}
+function addVideos(files) {
+  const ev = cur;
+  for (const file of files) {
+    if (!/^video\//.test(file.type) && !/\.(mp4|webm|mov)$/i.test(file.name)) { toast(`${file.name} isn't a video.`, true); continue; }
+    if (file.size > MAX_VIDEO) { toast(`${file.name} is ${Math.round(file.size / 1048576)} MB. The limit is 50 MB, so compress it first (sending it through WhatsApp does this).`, true); continue; }
+    const v = { id: newId(), title: '', pending: true };
+    cur.videos.push(v);
+    $('#videos').insertAdjacentHTML('beforeend', videoHTML(v));
+    queue.push(() => uploadVideo(ev, v, file));
+  }
+  dirty = true;
+  runQueue();
+}
+async function uploadVideo(ev, v, file) {
+  const mine = [];
+  try {
+    const info = await videoInfo(file);
+    v.duration = Math.round((info.duration || 0) * 10) / 10;
+    const base = `events/${ev.id}/${v.id}`, ext = ((file.name.match(/\.(mp4|webm|mov)$/i) || [])[1] || 'mp4').toLowerCase();
+    const type = file.type || { mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime' }[ext];
+    if (info.poster) {
+      v.preview = URL.createObjectURL(info.poster); previews.push(v.preview); refreshVideo(v);
+      v.poster = await put(`${base}-poster.${extOf(info.poster)}`, info.poster); mine.push(v.poster);
+    }
+    v.path = await put(`${base}.${ext}`, file, f => setProgress(v.id, f), type); mine.push(v.path);
+    uploaded.push(...mine);
+    delete v.pending;
+    if (!ev.videos.includes(v)) dropFiles(mine);
+    else refreshVideo(v);
+  } catch (err) {
+    removeFiles(mine);
+    if (ev.videos.includes(v)) ev.videos.splice(ev.videos.indexOf(v), 1);
+    $(`#videos [data-id="${v.id}"]`)?.remove();
+    toast(`Couldn't add ${file.name}: ${err.message}`, true);
+  }
+}
+
+// pickers and drag-and-drop
+for (const [input, drop, add] of [['#photoInput', '#photoDrop', addPhotos], ['#videoInput', '#videoDrop', addVideos]]) {
+  const el = $(drop);
+  $(input).addEventListener('change', e => { add([...e.target.files]); e.target.value = ''; });
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('is-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('is-over'));
+  el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('is-over'); add([...e.dataTransfer.files]); });
+}
+
+/* save and delete */
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (running) { toast('Wait for the uploads to finish first.', true); return; }
+  const name = F('name').value.trim(), venue = F('venue').value.trim(), slug = slugify(F('slug').value || name);
+  if (!name) { F('name').focus(); toast('Give the event a name.', true); return; }
+  if (!venue) { F('venue').focus(); toast('Add the venue.', true); return; }
+  if ((await builtIn).has(slug)) { $('#more').open = true; F('slug').focus(); toast('A built-in event already uses this web address. Change it under More settings.', true); return; }
+  const date = F('date').value || null, year = date ? +date.slice(0, 4) : (parseInt(F('year').value, 10) || null);
+  const row = {
+    id: cur.id, slug, name, venue,
+    category: F('category').value, space: F('space').value,
+    occasion: F('occasion').value.trim() || null, client: F('client').value.trim() || null,
+    date, year,
+    summary: F('summary').value.trim(), description: F('description').value.trim(),
+    highlights: F('highlights').value.split('\n').map(s => s.trim()).filter(Boolean),
+    photos: cur.photos.map(({ id, full, small, w, h, c, alt }) => ({ id, full, small: small || null, w, h, c, alt: (alt || '').trim() })),
+    videos: cur.videos.map(({ id, path, poster, title, duration }) => ({ id, path, poster: poster || null, title: (title || '').trim(), duration: duration || 0 })),
+    cover: coverId(),
+    layout: F('layout').value || 'auto', showcase: parseInt(F('showcase').value, 10) || null,
+    published: F('published').checked, on_front: F('on_front').checked, in_gallery: F('in_gallery').checked, in_films: F('in_films').checked
+  };
+  const btn = $('#saveBtn'); btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.from('events').upsert(row);
+  setBusy();
+  if (error) {
+    if (error.code === '23505') { $('#more').open = true; F('slug').focus(); }
+    toast(error.code === '23505' ? 'Another event already uses this web address. Change it under More settings.' : `Couldn't save: ${error.message}`, true);
+    return;
+  }
+  removeFiles(removed);
+  previews.forEach(u => URL.revokeObjectURL(u)); previews = [];
+  uploaded = []; removed = []; dirty = false; cur = null;
+  view('list');
+  toast(row.published ? "Saved. It's on the website now." : 'Saved as a draft.');
+  loadList();
+});
+
+$('#delBtn').addEventListener('click', async () => {
+  if (running) { toast('Wait for the uploads to finish first.', true); return; }
+  if (!confirm(`Delete "${cur.name}"? It will disappear from the website, with its photos and films. This can't be undone.`)) return;
+  const { error } = await sb.from('events').delete().eq('id', cur.id);
+  if (error) { toast(`Couldn't delete: ${error.message}`, true); return; }
+  const dir = `events/${cur.id}`, { data } = await sb.storage.from(BUCKET).list(dir, { limit: 1000 });
+  await removeFiles((data || []).map(f => `${dir}/${f.name}`));
+  uploaded = []; removed = []; dirty = false; cur = null;
+  view('list');
+  toast('Deleted.');
+  loadList();
+});
+
+/* ---------- start ---------- */
+const { data: { session } } = await sb.auth.getSession();
+if (session) await enter(session.user); else view('login');
+})();
+</script>
+</body>
+</html>
