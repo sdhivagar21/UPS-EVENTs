@@ -1809,6 +1809,7 @@ const count = (arr, f) => arr.reduce((m, x) => (m[f(x)] = (m[f(x)] || 0) + 1, m)
 const srcOf = (ev, im, size) => im.full ? (size === 's' && im.small ? im.small : im.full) : im.src ? encodeURI(im.src) : `images/web/${ev.slug}/${im.n}-${size}.webp`;
 const srcsetOf = (ev, im) => im.full ? (im.small ? `${im.small} 720w, ${im.full} ${im.w}w` : '') : im.src ? '' : `${srcOf(ev, im, 's')} 720w, ${srcOf(ev, im, 'l')} ${im.w}w`;
 function imgTag(ev, im, { sizes = '100vw', eager = false, alt } = {}) {
+  if (!im) return '';  // an edited event can end up with no photos
   const ss = srcsetOf(ev, im);
   return `<img src="${srcOf(ev, im, ss ? 's' : 'l')}"${ss ? ` srcset="${ss}" sizes="${sizes}"` : ''} width="${im.w}" height="${im.h}" alt="${esc(alt ?? im.alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="background:${im.c || '#0C0F33'}">`;
 }
@@ -1825,18 +1826,25 @@ const evLink = ev => `#/events/${ev.slug}`;
 const artLink = a => `#/journal/${a.slug}`;
 const CHEV_SVG = `<svg class="chev-icon" viewBox="0 0 612 460" aria-hidden="true"><use href="#ups-mark"/></svg>`;
 
-/* ---------- events added from the admin page ----------
-   Published events live in Supabase (see README). The request starts now, while the hero paints,
-   and the rest of the page waits for it (at most 2.5 s) so new events land in every section. */
+/* ---------- events from the admin page ----------
+   Events added or edited on the admin page live in Supabase (see README). A row marked `builtin`
+   replaces the built-in event with the same slug, or hides it when the row isn't published.
+   The request starts now, while the hero paints, and the rest of the page waits for it (at most 2.5 s). */
 const SB = SITE.supabase || {}, SB_URL = String(SB.url || '').replace(/\/+$/, '');
 const sbFile = p => p ? `${SB_URL}/storage/v1/object/public/media/${p}` : '';
 const remoteRows = SB_URL && SB.key ? Promise.race([
-  fetch(`${SB_URL}/rest/v1/events?select=*&published=is.true&order=created_at.desc`, { headers: { apikey: SB.key } }).then(r => r.ok ? r.json() : []).catch(() => []),
+  fetch(`${SB_URL}/rest/v1/events?select=*&or=(published.is.true,builtin.is.true)&order=created_at.desc`, { headers: { apikey: SB.key } }).then(r => r.ok ? r.json() : []).catch(() => []),
   new Promise(r => setTimeout(() => r([]), 2500))
 ]) : Promise.resolve([]);
 function fromRow(r) {
-  const images = (r.photos || []).filter(p => p && p.full).map((p, i) => ({ n: String(p.id || pad2(i + 1)), w: p.w || 1600, h: p.h || 1200, c: p.c || '#0C0F33', alt: p.alt || r.name, full: sbFile(p.full), small: sbFile(p.small) }));
-  const videos = (r.videos || []).filter(v => v && v.path).map((v, i) => ({ src: sbFile(v.path), poster: sbFile(v.poster) || (images[0] ? images[0].small || images[0].full : ''), title: v.title || `Film ${i + 1}`, duration: v.duration || 0 }));
+  // photos and films kept from a built-in event (`local`) stay in images/web; uploaded ones are in the media bucket
+  const images = (r.photos || []).filter(p => p && (p.full || p.local)).map((p, i) => {
+    const im = { n: String(p.id || pad2(i + 1)), w: p.w || 1600, h: p.h || 1200, c: p.c || '#0C0F33', alt: p.alt || r.name };
+    if (p.local) { if (p.ch) im.ch = p.ch; return im; }
+    return Object.assign(im, { full: sbFile(p.full), small: sbFile(p.small) });
+  });
+  const still = images[0] ? images[0].small || images[0].full || `images/web/${r.slug}/${images[0].n}-s.webp` : '';
+  const videos = (r.videos || []).filter(v => v && (v.path || v.src)).map((v, i) => ({ src: v.src || sbFile(v.path), poster: (v.src ? v.poster : sbFile(v.poster)) || still, title: v.title || `Film ${i + 1}`, duration: v.duration || 0 }));
   const auto = videos.length ? 'film' : images.length >= 6 ? 'mosaic' : images.length >= 3 ? 'split' : 'carpet';
   const layout = !r.layout || r.layout === 'auto' || (r.layout === 'film' && !videos.length) ? auto : r.layout;
   const date = r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
@@ -1851,7 +1859,10 @@ const heroMedia = $('#heroMedia');
 const slides = HERO_SLIDES.map(([slug, n]) => ({ ev: BY[slug], im: getImg(slug, n) })).filter(s => s.ev && s.im);
 // slide 1 and its caption ship in the HTML so the hero paints before any script runs
 heroMedia.insertAdjacentHTML('beforeend', slides.slice(1).map(() => '<figure class="hero__slide"></figure>').join(''));
-const heroSrcset = s => s.im.full ? srcsetOf(s.ev, s.im) : s.im.src ? '' : `images/web/${s.ev.slug}/${s.im.n}-h.webp 800w, ${srcOf(s.ev, s.im, 'l')} ${s.im.w}w`;
+// the 800px hero crops (-h.webp) exist only for the built-in slides; other photos use their usual sizes
+const HAS_H = new Set(HERO_SLIDES.map(s => s.join('/'))), HAS_SLIDE = new Set(HERO_SLIDES.map(([slug]) => slug));
+const hasH = s => !s.im.full && !s.im.src && HAS_H.has(`${s.ev.slug}/${s.im.n}`);
+const heroSrcset = s => hasH(s) ? `images/web/${s.ev.slug}/${s.im.n}-h.webp 800w, ${srcOf(s.ev, s.im, 'l')} ${s.im.w}w` : srcsetOf(s.ev, s.im);
 let heroIndex = 0, heroTimer = null, heroVisible = true;
 function heroCaption() {
   const s = slides[heroIndex];
@@ -1859,7 +1870,7 @@ function heroCaption() {
 }
 function loadSlide(i) {
   const fig = heroMedia.children[i];
-  if (fig && !fig.firstChild) { const s = slides[i], ss = heroSrcset(s), src = s.im.full ? srcOf(s.ev, s.im, 's') : ss ? `images/web/${s.ev.slug}/${s.im.n}-h.webp` : srcOf(s.ev, s.im, 'l'); fig.innerHTML = `<img src="${src}"${ss ? ` srcset="${ss}" sizes="100vw"` : ''} width="${s.im.w}" height="${s.im.h}" alt="" decoding="async">`; }
+  if (fig && !fig.firstChild) { const s = slides[i], ss = heroSrcset(s), src = hasH(s) ? `images/web/${s.ev.slug}/${s.im.n}-h.webp` : srcOf(s.ev, s.im, ss ? 's' : 'l'); fig.innerHTML = `<img src="${src}"${ss ? ` srcset="${ss}" sizes="100vw"` : ''} width="${s.im.w}" height="${s.im.h}" alt="" decoding="async">`; }
 }
 function nextSlide() {
   if (!heroVisible || document.hidden) return;
@@ -1868,6 +1879,25 @@ function nextSlide() {
   heroMedia.children[heroIndex].classList.remove('is-active');
   heroIndex = next;
   heroMedia.children[heroIndex].classList.add('is-active');
+  heroCaption();
+}
+// rebuilt once edits arrive: the built-in slides of events still shown (their photo, or the cover if it was
+// removed), then events marked for the front page; the photo on screen stays put if it's still in the list
+function refreshSlides() {
+  const key = s => `${s.ev.slug}/${s.im.n}/${s.im.full || ''}`;
+  const keep = HERO_SLIDES.map(([slug, n]) => ({ ev: BY[slug], n }))
+    .filter(({ ev }) => ev && !ev.hidden && ev.images.length && (!ev.edited || ev.front))
+    .map(({ ev, n }) => ({ ev, im: ev.images.find(im => im.n === n) || coverOf(ev) }));
+  const extra = EVENTS.filter(ev => ev.front && ev.images.length && !HAS_SLIDE.has(ev.slug)).map(ev => ({ ev, im: coverOf(ev) }));
+  const cur = slides[heroIndex], at = cur ? keep.findIndex(s => key(s) === key(cur)) : -1;
+  // new front-page events come straight after the photo on screen
+  const next = at >= 0 ? [keep[at], ...extra, ...keep.slice(at + 1), ...keep.slice(0, at)] : [...extra, ...keep];
+  if (!next.length || next.map(key).join() === slides.map(key).join()) return;
+  const curFig = heroMedia.children[heroIndex];
+  slides.splice(0, slides.length, ...next);
+  heroMedia.replaceChildren(...next.map((s, i) => i === 0 && at >= 0 ? curFig : Object.assign(document.createElement('figure'), { className: 'hero__slide' })));
+  heroIndex = 0;
+  if (at < 0) { loadSlide(0); heroMedia.children[0].classList.add('is-active'); }
   heroCaption();
 }
 function startHero() {
@@ -2374,13 +2404,13 @@ function articleHTML(a) {
       case 'p': return `<p>${esc(b[1])}</p>`;
       case 'h': return `<h2>${esc(b[1])}</h2>`;
       case 'quote': return `<blockquote>${esc(b[1])}</blockquote>`;
-      case 'img': { const e = BY[b[1]], i = getImg(b[1], b[2]); return i ? `<figure>${shot(e, i, { sizes: '(min-width:900px) 900px, 100vw', chev: false, cap: false })}<figcaption>${esc(b[3])} From <a href="${evLink(e)}">${esc(e.eventName)}</a>.</figcaption></figure>` : ''; }
+      case 'img': { const e = BY[b[1]], i = getImg(b[1], b[2]); return i ? `<figure>${shot(e, i, { sizes: '(min-width:900px) 900px, 100vw', chev: false, cap: false })}<figcaption>${esc(b[3])} From ${e.hidden ? esc(e.eventName) : `<a href="${evLink(e)}">${esc(e.eventName)}</a>`}.</figcaption></figure>` : ''; }
       case 'video': { const e = BY[b[1]], v = (e.videos || [])[b[2]]; return v ? `<figure><video controls playsinline preload="none" poster="${encodeURI(v.poster)}" src="${encodeURI(v.src)}"></video><figcaption>${esc(b[3])}</figcaption></figure>` : ''; }
       case 'cta': return `<p class="article__cta"><a class="btn btn--red" href="#contact" data-close data-cursor="open">Plan your event with UPS</a></p>`;
       default: return '';
     }
   }).join('');
-  const evs = (a.related || []).map(s => BY[s]).filter(e => e && e.images.length);
+  const evs = (a.related || []).map(s => BY[s]).filter(e => e && !e.hidden && e.images.length);
   const more = ARTICLES.filter(x => x !== a).sort((x, y) => (y.category === a.category) - (x.category === a.category) || (y.related || []).filter(s => (a.related || []).includes(s)).length - (x.related || []).filter(s => (a.related || []).includes(s)).length).slice(0, 3);
   return `${bar('Back to the journal')}
     <header class="view__hero">${imgTag(ev, im, { sizes: '100vw', eager: true })}
@@ -2417,7 +2447,7 @@ function hideViews() {
 }
 function route() {
   const h = decodeURIComponent(location.hash); let m;
-  if ((m = h.match(/^#\/events\/([\w-]+)/)) && BY[m[1]] && BY[m[1]].images.length) show('event', m[1]);
+  if ((m = h.match(/^#\/events\/([\w-]+)/)) && BY[m[1]] && !BY[m[1]].hidden && BY[m[1]].images.length) show('event', m[1]);
   else if ((m = h.match(/^#\/journal\/([\w-]+)/)) && ART[m[1]]) show('article', m[1]);
   else hideViews();
 }
@@ -2641,18 +2671,26 @@ function fab() {
    handing control back to the browser between each, so the page never freezes while it fills in. */
 const nextTask = () => new Promise(r => (window.scheduler && scheduler.yield) ? scheduler.yield().then(r) : setTimeout(r, 0));
 function addRemote(rows) {
-  const add = (Array.isArray(rows) ? rows : []).map(fromRow).filter(e => e.slug && e.eventName && !BY[e.slug]);
-  if (!add.length) return;
+  rows = Array.isArray(rows) ? rows : [];
+  // edits to built-in events change them in place, so everything already holding them sees the edit.
+  // A hidden event leaves every list but stays in BY, so journal and service photos still find it.
+  const edits = rows.filter(r => r.builtin && BY[r.slug] && !BY[r.slug].remote);
+  for (const r of edits) {
+    const ev = BY[r.slug];
+    if (!r.published) { ev.hidden = true; continue; }
+    const { remote, relatedArticles, participants, sponsors, ...fields } = fromRow(r);
+    // the curated showcase picks stay first, minus removed photos; the other photos follow in order
+    const ns = fields.images.map(im => im.n), picked = (ev.showcase || []).filter(n => ns.includes(n));
+    Object.assign(ev, fields, { showcase: [...picked, ...ns.filter(n => !picked.includes(n))], edited: true });
+  }
+  for (let i = EVENTS.length - 1; i >= 0; i--) if (EVENTS[i].hidden) EVENTS.splice(i, 1);
+  const add = rows.filter(r => r.published && !BY[r.slug]).map(fromRow).filter(e => e.slug && e.eventName);
+  if (!edits.length && !add.length) return;
   EVENTS.unshift(...add);
   add.forEach(e => { BY[e.slug] = e; });
-  withPhotos.unshift(...add.filter(e => e.images.length));
-  FILMS.unshift(...add.filter(e => e.inFilms).flatMap(ev => ev.videos.map(v => ({ ev, v }))));
-  // "front" events join the hero slideshow right after the photo showing now
-  const front = add.filter(e => e.front && e.images.length).map(ev => ({ ev, im: coverOf(ev) }));
-  if (front.length) {
-    slides.splice(heroIndex + 1, 0, ...front);
-    heroMedia.children[heroIndex].after(...front.map(() => Object.assign(document.createElement('figure'), { className: 'hero__slide' })));
-  }
+  withPhotos.splice(0, withPhotos.length, ...EVENTS.filter(e => e.images.length));
+  FILMS.splice(0, FILMS.length, ...EVENTS.filter(e => e.inFilms !== false).flatMap(ev => ev.videos.map(v => ({ ev, v }))));
+  refreshSlides();
   FEATURED = featuredList();
   if (/^#\/events\//.test(location.hash)) route();
 }

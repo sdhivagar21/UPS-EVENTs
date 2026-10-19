@@ -4,6 +4,8 @@
 
 Go to **upsevents.in/admin**, sign in, and click **+ New event**. Fill in the details, add photos (they're resized in the browser) and films, then click **Save**. With **Show on the website** ticked, the event appears on the site straight away, next to the events built into `index.html`.
 
+The events built into `index.html` are listed there too, under **Original events on the website**. Editing one saves your version as a database row with `builtin` set and the same slug. The site shows that row instead of the original, or hides the event when **Show on the website** is unticked. **Reset to original** deletes the row and brings the original back.
+
 Events, photos and films are stored in a Supabase project. Setting one up from scratch:
 
 1. Create a project at [supabase.com](https://supabase.com) (region: South Asia, Mumbai).

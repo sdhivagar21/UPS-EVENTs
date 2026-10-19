@@ -46,9 +46,13 @@ create table if not exists public.events (
   on_front    boolean not null default false,        -- in the home page slideshow
   in_gallery  boolean not null default true,
   in_films    boolean not null default true,
+  builtin     boolean not null default false,        -- an edit of the built-in event with this slug
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
+
+-- added after the first setup; harmless when the column is already there
+alter table public.events add column if not exists builtin boolean not null default false;
 
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql set search_path = '' as $$
@@ -62,10 +66,11 @@ alter table public.events enable row level security;
 grant select on public.events to anon, authenticated;
 grant insert, update, delete on public.events to authenticated;
 
+-- edits of built-in events are readable even when unpublished, so the site knows to hide those events
 drop policy if exists "Published events are public" on public.events;
 create policy "Published events are public" on public.events
   for select to anon, authenticated
-  using (published or (select public.is_admin()));
+  using (published or builtin or (select public.is_admin()));
 
 drop policy if exists "Admins manage events" on public.events;
 create policy "Admins manage events" on public.events

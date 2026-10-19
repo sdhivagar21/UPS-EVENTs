@@ -70,6 +70,10 @@ input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;accen
 .ev__side{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .pill{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border:1px solid var(--line);color:var(--mist);white-space:nowrap}
 .pill--on{color:var(--ok);border-color:rgba(61,220,151,.45)}
+.pill--off{color:#ff8a8a;border-color:rgba(255,138,138,.4)}
+.group{margin:22px 0 2px;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mist)}
+.group:first-child{margin-top:0}
+.note{margin:0;padding:12px 14px;border-left:3px solid var(--red);background:rgba(255,26,26,.06);font-size:.9rem}
 .empty{padding:32px 16px;text-align:center;color:var(--mist);border:1px dashed var(--line)}
 @media (max-width:620px){
   .ev{grid-template-columns:72px minmax(0,1fr)}
@@ -82,7 +86,8 @@ input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;accen
 .form>.bar{position:sticky;top:61px;z-index:4;padding:10px 0;background:var(--ink)}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 /* on phones the top bar wraps, so it scrolls away and the Save bar sticks to the very top instead */
-@media (max-width:620px){.grid2{grid-template-columns:1fr}.top{position:static}.me span{display:none}.form>.bar{top:0}}
+@media (max-width:620px){.grid2{grid-template-columns:1fr}.top{position:static}.me span{display:none}
+  .form>.bar{top:0;flex-wrap:nowrap}.form>.bar h1{flex:1;min-width:0;font-size:1.1rem;text-align:center}}
 .hint{margin:-2px 0 0;font-size:.85rem;color:var(--mist);font-weight:400}
 .url{font-family:ui-monospace,Consolas,monospace;font-size:.85rem;color:var(--mist);overflow-wrap:anywhere}
 details{border-top:1px solid var(--line);padding-top:14px}
@@ -152,7 +157,7 @@ dialog .card{border:0}
 
   <section id="list" hidden>
     <div class="bar"><h1>Events</h1><button class="btn btn--red" type="button" id="newBtn">+ New event</button></div>
-    <p class="intro muted">Events you add here appear on upsevents.in alongside the ones built into the site. Changes show up as soon as you save.</p>
+    <p class="intro muted">Add new events, or edit, hide and change the photos of the events already on upsevents.in. Changes show up on the website as soon as you save.</p>
     <ul class="events" id="events"></ul>
   </section>
 
@@ -166,6 +171,7 @@ dialog .card{border:0}
 
       <div class="card">
         <h2>About the event</h2>
+        <p class="note" id="builtinNote" hidden>This is one of the website's original events. When you save, the website shows your version instead. <b>Reset to original</b> at the bottom brings the original back.</p>
         <label>Event name
           <input name="name" required maxlength="120" placeholder="Pongal Celebration at Alliance Orchid Spring">
           <small>Write it as "what at where". The site shows the first part big and the "at …" part underneath.</small>
@@ -212,7 +218,7 @@ dialog .card{border:0}
 
       <div class="card where">
         <h2>Where it shows</h2>
-        <label class="check"><input type="checkbox" name="published"><span><b>Show on the website</b><br><small>Untick to keep it as a draft that only you can see here.</small></span></label>
+        <label class="check"><input type="checkbox" name="published"><span><b>Show on the website</b><br><small id="pubHint">Untick to keep it as a draft that only you can see here.</small></span></label>
         <label class="check"><input type="checkbox" name="on_front"><span><b>Add to the home page slideshow</b><br><small>Uses the cover photo.</small></span></label>
         <label class="check"><input type="checkbox" name="in_gallery"><span><b>Show its photos in the Gallery</b></span></label>
         <label class="check"><input type="checkbox" name="in_films"><span><b>Show its films in the Films section</b></span></label>
@@ -234,8 +240,12 @@ dialog .card{border:0}
       </div>
 
       <div class="danger" id="danger">
-        <small>Deleting removes the event and its photos and films from the website.</small>
-        <button class="btn btn--bad" type="button" id="delBtn">Delete event</button>
+        <small id="dangerText">Deleting removes the event and its photos and films from the website.</small>
+        <span class="row">
+          <button class="btn btn--bad" type="button" id="hideBtn">Hide from website</button>
+          <button class="btn btn--bad" type="button" id="resetBtn">Reset to original</button>
+          <button class="btn btn--bad" type="button" id="delBtn">Delete event</button>
+        </span>
       </div>
     </form>
   </section>
@@ -284,9 +294,38 @@ const sb = supabase.createClient(SB_URL, CONFIG.key);
 const fileUrl = p => p ? `${SB_URL}/storage/v1/object/public/${BUCKET}/${p}` : '';
 const removeFiles = paths => paths.length ? sb.storage.from(BUCKET).remove(paths) : Promise.resolve();
 
-// slugs of the events built into the site: a database event with the same slug would be hidden
-const builtIn = fetch('../', { cache: 'no-store' }).then(r => r.text())
-  .then(t => new Set([...t.matchAll(/^\s+slug: "([a-z0-9-]+)",\r?$/gm)].map(m => m[1]))).catch(() => new Set());
+/* The events built into the site, read from its own source so they can be edited here too.
+   An edit is saved as a row with `builtin: true` and the same slug; the site then shows that row
+   instead (or hides the event, when the row isn't published). Deleting the row restores the original. */
+function arrayIn(src, name) {
+  const at = src.indexOf(`\nconst ${name} = [`); if (at < 0) return [];
+  const s = src.indexOf('[', at);
+  for (let k = s, depth = 0, q = null; k < src.length; k++) {
+    const c = src[k];
+    if (q) { if (c === '\\') k++; else if (c === q) q = null; continue; }
+    if (c === '"' || c === "'" || c === '`') q = c;
+    else if (c === '[' || c === '{') depth++;
+    else if ((c === ']' || c === '}') && !--depth) return new Function(`return ${src.slice(s, k + 1)}`)();
+  }
+  return [];
+}
+const site = fetch('../', { cache: 'no-store' }).then(r => r.text())
+  .then(t => ({ events: arrayIn(t, 'EVENTS'), hero: new Set(arrayIn(t, 'HERO_SLIDES').map(([slug]) => slug)) }))
+  .catch(() => ({ events: [], hero: new Set() }));
+const localSrc = (slug, id, size = 's') => `../images/web/${slug}/${id}-${size}.webp`;
+const photoSrc = (slug, p) => p.local ? localSrc(slug, p.id) : fileUrl(p.small || p.full);
+function builtInRow(ev, hero) {
+  return {
+    id: crypto.randomUUID(), builtin: true, slug: ev.slug, name: ev.eventName, venue: ev.location,
+    category: ev.category, space: ev.space, occasion: ev.occasion || '', client: ev.client || '',
+    date: /^\d{4}-\d{2}-\d{2}$/.test(ev.date || '') ? ev.date : null, year: ev.year || null,
+    summary: ev.summary || '', description: ev.description || '', highlights: ev.highlights || [],
+    photos: ev.images.map(im => ({ id: im.n, local: true, w: im.w, h: im.h, c: im.c, alt: im.alt || '', ...(im.ch ? { ch: im.ch } : {}) })),
+    videos: (ev.videos || []).map(v => ({ id: newId(), local: true, src: v.src, poster: v.poster, title: v.title || '', duration: v.duration || 0 })),
+    cover: ev.cover || (ev.images[0] || {}).n || null, layout: ev.layout || 'auto', showcase: ev.featured || null,
+    published: true, on_front: hero.has(ev.slug), in_gallery: ev.inGallery !== false, in_films: true
+  };
+}
 
 /* ---------- sign in ---------- */
 async function enter(user) {
@@ -333,26 +372,43 @@ pwForm.addEventListener('submit', async e => {
 });
 
 /* ---------- event list ---------- */
-let rows = [];
+let rows = [], siteData = { events: [], hero: new Set() };
+const itemHTML = (r, pill, btn) => {
+  const photos = r.photos || [], cover = photos.find(p => p.id === r.cover) || photos[0], films = (r.videos || []).length;
+  return `<li class="ev">
+    <span class="ev__pic">${cover ? `<img src="${esc(photoSrc(r.slug, cover))}" alt="" loading="lazy">` : ''}</span>
+    <span class="ev__text"><b>${esc(r.name)}</b><small>${esc([r.venue, fmtDate(r)].filter(Boolean).join(' · '))}</small>
+      <small>${photos.length} photo${photos.length === 1 ? '' : 's'}${films ? ` · ${films} film${films === 1 ? '' : 's'}` : ''}</small></span>
+    <span class="ev__side">${pill}
+      ${r.published && photos.length ? `<a class="btn btn--sm" href="../#/events/${esc(r.slug)}" target="_blank" rel="noopener">View</a>` : ''}
+      ${btn}</span>
+  </li>`;
+};
 async function loadList() {
   const ul = $('#events');
   ul.innerHTML = '<li class="empty">Loading…</li>';
-  const { data, error } = await sb.from('events').select('*').order('created_at', { ascending: false });
+  const [{ data, error }, s] = await Promise.all([sb.from('events').select('*').order('created_at', { ascending: false }), site]);
   if (error) { ul.innerHTML = `<li class="empty">Couldn't load events: ${esc(error.message)}</li>`; return; }
-  rows = data;
-  ul.innerHTML = rows.length ? rows.map(r => {
-    const photos = r.photos || [], cover = photos.find(p => p.id === r.cover) || photos[0], films = (r.videos || []).length;
-    return `<li class="ev">
-      <span class="ev__pic">${cover ? `<img src="${esc(fileUrl(cover.small || cover.full))}" alt="" loading="lazy">` : ''}</span>
-      <span class="ev__text"><b>${esc(r.name)}</b><small>${esc([r.venue, fmtDate(r)].filter(Boolean).join(' · '))}</small>
-        <small>${photos.length} photo${photos.length === 1 ? '' : 's'}${films ? ` · ${films} film${films === 1 ? '' : 's'}` : ''}</small></span>
-      <span class="ev__side"><span class="pill${r.published ? ' pill--on' : ''}">${r.published ? 'On the site' : 'Draft'}</span>
-        ${r.published && photos.length ? `<a class="btn btn--sm" href="../#/events/${esc(r.slug)}" target="_blank" rel="noopener">View</a>` : ''}
-        <button class="btn btn--sm" type="button" data-edit="${esc(r.id)}">Edit</button></span>
-    </li>`;
-  }).join('') : '<li class="empty">No events yet. Click <b>+ New event</b> to add your first one.</li>';
+  rows = data; siteData = s;
+  const slugs = new Set(s.events.map(ev => ev.slug)), edits = Object.fromEntries(rows.filter(r => r.builtin && slugs.has(r.slug)).map(r => [r.slug, r]));
+  const added = rows.filter(r => !(r.builtin && slugs.has(r.slug)));
+  ul.innerHTML = '<li class="group">Added on this page</li>'
+    + (added.length ? added.map(r => itemHTML(r, `<span class="pill${r.published ? ' pill--on' : ''}">${r.published ? 'On the site' : 'Draft'}</span>`, `<button class="btn btn--sm" type="button" data-edit="${esc(r.id)}">Edit</button>`)).join('')
+      : '<li class="empty">Nothing added yet. Click <b>+ New event</b> to add one.</li>')
+    + (s.events.length ? '<li class="group">Original events on the website</li>' + s.events.map(ev => {
+      const r = edits[ev.slug];
+      const pill = !r ? '<span class="pill">Original</span>' : r.published ? '<span class="pill pill--on">Edited</span>' : '<span class="pill pill--off">Hidden</span>';
+      return itemHTML(r || builtInRow(ev, s.hero), pill, `<button class="btn btn--sm" type="button" data-builtin="${esc(ev.slug)}">Edit</button>`);
+    }).join('') : '');
 }
-$('#events').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openEditor(rows.find(r => r.id === b.dataset.edit)); });
+$('#events').addEventListener('click', e => {
+  const b = e.target.closest('[data-edit]'), o = e.target.closest('[data-builtin]');
+  if (b) openEditor(rows.find(r => r.id === b.dataset.edit));
+  else if (o) {
+    const r = rows.find(x => x.builtin && x.slug === o.dataset.builtin);
+    openEditor(r || builtInRow(siteData.events.find(ev => ev.slug === o.dataset.builtin), siteData.hero), !r);
+  }
+});
 $('#newBtn').addEventListener('click', () => openEditor(null));
 
 /* ---------- editor ----------
@@ -363,10 +419,12 @@ const form = $('#form'), F = n => form.elements.namedItem(n);
 let cur = null, dirty = false, slugTouched = false, uploaded = [], removed = [], previews = [];
 const queue = []; let running = false;
 
-function openEditor(row) {
+// `unsaved`: an original event opened for the first time, with no row in the database yet
+function openEditor(row, unsaved = false) {
   cur = row ? structuredClone(row) : { id: crypto.randomUUID(), photos: [], videos: [], published: true, in_gallery: true, in_films: true, layout: 'auto', category: 'Festivals', space: 'Apartment communities' };
-  cur.isNew = !row;
+  cur.saved = !!row && !unsaved;
   cur.photos = cur.photos || []; cur.videos = (cur.videos || []).map(v => ({ id: v.id || newId(), ...v }));
+  const bi = !!cur.builtin;
   form.reset();
   for (const k of ['name', 'venue', 'occasion', 'category', 'space', 'date', 'year', 'client', 'summary', 'description', 'slug', 'layout']) F(k).value = cur[k] ?? '';
   F('layout').value = cur.layout || 'auto';
@@ -375,8 +433,15 @@ function openEditor(row) {
   for (const k of ['published', 'on_front', 'in_gallery', 'in_films']) F(k).checked = !!cur[k];
   slugTouched = !!row;
   uploaded = []; removed = []; dirty = false;
-  $('#edTitle').textContent = row ? 'Edit event' : 'New event';
+  $('#edTitle').textContent = bi ? 'Edit original event' : row ? 'Edit event' : 'New event';
+  $('#builtinNote').hidden = !bi;
+  $('#pubHint').textContent = bi ? 'Untick to hide this event from the website.' : 'Untick to keep it as a draft that only you can see here.';
+  F('slug').disabled = bi;  // other pages link to the original events by their web address
   $('#danger').hidden = !row;
+  $('#dangerText').textContent = bi ? 'Hiding takes the event off the website until you show it again. Resetting removes all your changes and brings the original back.' : 'Deleting removes the event and its photos and films from the website.';
+  $('#hideBtn').hidden = !bi || !cur.published;
+  $('#resetBtn').hidden = !bi || !cur.saved;
+  $('#delBtn').hidden = bi;
   $('#more').open = false;
   showSlug(); renderPhotos(); renderVideos(); setBusy();
   view('editor');
@@ -409,7 +474,7 @@ function setBusy() {
 const coverId = () => { const done = cur.photos.filter(p => !p.pending); return (done.find(p => p.id === cur.cover) || done[0] || {}).id || null; };
 const loadBar = (label) => `<span class="load"><span>${label}</span><i><b></b></i></span>`;
 function photoHTML(p) {
-  const isCover = !p.pending && p.id === coverId(), src = p.preview || fileUrl(p.small || p.full);
+  const isCover = !p.pending && p.id === coverId(), src = p.preview || (p.pending ? '' : photoSrc(cur.slug, p));
   return `<li class="ph${isCover ? ' is-cover' : ''}" data-id="${esc(p.id)}">
     <span class="ph__pic">${src ? `<img src="${esc(src)}" alt="">` : ''}${p.pending ? loadBar('Uploading…') : ''}</span>
     <span class="ph__row">
@@ -554,7 +619,7 @@ async function uploadPhoto(ev, p, file) {
 
 /* films */
 function videoHTML(v) {
-  const poster = v.preview || fileUrl(v.poster), mins = v.duration ? `${Math.floor(v.duration / 60)}:${String(Math.round(v.duration % 60)).padStart(2, '0')}` : '';
+  const poster = v.preview || (v.local ? (v.poster ? '../' + v.poster : '') : fileUrl(v.poster)), mins = v.duration ? `${Math.floor(v.duration / 60)}:${String(Math.round(v.duration % 60)).padStart(2, '0')}` : '';
   return `<li class="vid" data-id="${esc(v.id)}">
     <span class="ph__pic">${poster ? `<img src="${esc(poster)}" alt="">` : ''}${v.pending ? loadBar('Uploading…') : ''}</span>
     <label>Film title ${mins ? `<small>${mins}</small>` : ''}<input type="text" data-title maxlength="80" value="${esc(v.title || '')}" placeholder="e.g. The procession"></label>
@@ -566,7 +631,8 @@ const refreshVideo = v => { const li = $(`#videos [data-id="${v.id}"]`); if (li)
 $('#videos').addEventListener('click', e => {
   if (!e.target.closest('[data-vdel]')) return;
   const i = cur.videos.findIndex(v => v.id === e.target.closest('.vid').dataset.id);
-  dropFiles([cur.videos[i].path, cur.videos[i].poster]);
+  const v = cur.videos[i];
+  if (!v.local) dropFiles([v.path, v.poster]);  // an original film's files belong to the website itself
   cur.videos.splice(i, 1);
   dirty = true; renderVideos();
 });
@@ -643,20 +709,25 @@ for (const [input, drop, add] of [['#photoInput', '#photoDrop', addPhotos], ['#v
 form.addEventListener('submit', async e => {
   e.preventDefault();
   if (running) { toast('Wait for the uploads to finish first.', true); return; }
-  const name = F('name').value.trim(), venue = F('venue').value.trim(), slug = slugify(F('slug').value || name);
+  const bi = !!cur.builtin, name = F('name').value.trim(), venue = F('venue').value.trim(), slug = bi ? cur.slug : slugify(F('slug').value || name);
   if (!name) { F('name').focus(); toast('Give the event a name.', true); return; }
   if (!venue) { F('venue').focus(); toast('Add the venue.', true); return; }
-  if ((await builtIn).has(slug)) { $('#more').open = true; F('slug').focus(); toast('A built-in event already uses this web address. Change it under More settings.', true); return; }
+  if (!bi && (await site).events.some(ev => ev.slug === slug)) { $('#more').open = true; F('slug').focus(); toast('One of the original events already uses this web address. Change it under More settings.', true); return; }
   const date = F('date').value || null, year = date ? +date.slice(0, 4) : (parseInt(F('year').value, 10) || null);
   const row = {
-    id: cur.id, slug, name, venue,
+    id: cur.id, slug, name, venue, builtin: bi,
     category: F('category').value, space: F('space').value,
     occasion: F('occasion').value.trim() || null, client: F('client').value.trim() || null,
     date, year,
     summary: F('summary').value.trim(), description: F('description').value.trim(),
     highlights: F('highlights').value.split('\n').map(s => s.trim()).filter(Boolean),
-    photos: cur.photos.map(({ id, full, small, w, h, c, alt }) => ({ id, full, small: small || null, w, h, c, alt: (alt || '').trim() })),
-    videos: cur.videos.map(({ id, path, poster, title, duration }) => ({ id, path, poster: poster || null, title: (title || '').trim(), duration: duration || 0 })),
+    // `local` photos and films are the original event's own files on the website
+    photos: cur.photos.map(({ id, local, ch, full, small, w, h, c, alt }) => local
+      ? { id, local: true, w, h, c, alt: (alt || '').trim(), ...(ch ? { ch } : {}) }
+      : { id, full, small: small || null, w, h, c, alt: (alt || '').trim() }),
+    videos: cur.videos.map(({ id, local, src, path, poster, title, duration }) => local
+      ? { id, local: true, src, poster: poster || null, title: (title || '').trim(), duration: duration || 0 }
+      : { id, path, poster: poster || null, title: (title || '').trim(), duration: duration || 0 }),
     cover: coverId(),
     layout: F('layout').value || 'auto', showcase: parseInt(F('showcase').value, 10) || null,
     published: F('published').checked, on_front: F('on_front').checked, in_gallery: F('in_gallery').checked, in_films: F('in_films').checked
@@ -673,22 +744,30 @@ form.addEventListener('submit', async e => {
   previews.forEach(u => URL.revokeObjectURL(u)); previews = [];
   uploaded = []; removed = []; dirty = false; cur = null;
   view('list');
-  toast(row.published ? "Saved. It's on the website now." : 'Saved as a draft.');
+  toast(bi ? (row.published ? 'Saved. The website now shows your version.' : 'Saved. This event is hidden from the website.')
+    : row.published ? "Saved. It's on the website now." : 'Saved as a draft.');
   loadList();
 });
 
-$('#delBtn').addEventListener('click', async () => {
+// hiding an original event is a save with "Show on the website" unticked
+$('#hideBtn').addEventListener('click', () => { F('published').checked = false; dirty = true; form.requestSubmit(); });
+
+// deleting the row removes an added event, or brings back the original of a built-in one
+async function dropRow(question, done) {
   if (running) { toast('Wait for the uploads to finish first.', true); return; }
-  if (!confirm(`Delete "${cur.name}"? It will disappear from the website, with its photos and films. This can't be undone.`)) return;
+  if (!confirm(question)) return;
   const { error } = await sb.from('events').delete().eq('id', cur.id);
-  if (error) { toast(`Couldn't delete: ${error.message}`, true); return; }
+  if (error) { toast(`Couldn't do that: ${error.message}`, true); return; }
   const dir = `events/${cur.id}`, { data } = await sb.storage.from(BUCKET).list(dir, { limit: 1000 });
   await removeFiles((data || []).map(f => `${dir}/${f.name}`));
+  previews.forEach(u => URL.revokeObjectURL(u)); previews = [];
   uploaded = []; removed = []; dirty = false; cur = null;
   view('list');
-  toast('Deleted.');
+  toast(done);
   loadList();
-});
+}
+$('#delBtn').addEventListener('click', () => dropRow(`Delete "${cur.name}"? It will disappear from the website, with its photos and films. This can't be undone.`, 'Deleted.'));
+$('#resetBtn').addEventListener('click', () => dropRow(`Reset "${cur.name}" to the original? Your changes to it, and any photos or films you added, will be removed.`, 'Back to the original.'));
 
 /* ---------- start ---------- */
 const { data: { session } } = await sb.auth.getSession();
