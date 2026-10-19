@@ -12,7 +12,7 @@ Events, photos and films are stored in a Supabase project. Setting one up from s
 2. Open **SQL Editor**, paste [`admin/setup.sql`](admin/setup.sql) and click **Run**. This creates the `events` and `admins` tables, the public `media` bucket and the access rules.
 3. Under **Authentication → Sign In / Providers**, turn off **Allow new users to sign up**.
 4. Under **Authentication → Users**, click **Add user** and create the admin's email and password. Then add the same email as a row in the `admins` table (**Table Editor → admins**). Only emails in that table can change anything.
-5. Copy the **Project URL** and the **publishable** (anon) key from **Project Settings → API Keys**. Paste them into `SITE.supabase` in `index.html` and `CONFIG` in `admin/index.html`. Never use the secret (`service_role`) key in either file.
+5. Copy the **Project URL** and the **publishable** (anon) key from **Project Settings → API Keys**. Paste them into `SITE.supabase` in `index.html` and `CONFIG` in `admin/index.html`, and put the URL in the `preconnect` link near the top of `index.html`. Never use the secret (`service_role`) key in either file.
 
 To add another admin later, repeat step 4. To remove one, delete their row from `admins`.
 
